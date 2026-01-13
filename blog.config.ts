@@ -7,7 +7,7 @@ const basicConfig = {
 	description: '兹将心事，化入岁暮之砚。不求标榜于竹帛，惟愿苔痕过雪，鸿影印沙，为逝川留一二实证。倘他年风翻此页，便算在人间，多活了一遭。',
 	author: {
 		name: '姜一',
-		avatar: 'https://www.zhilu.https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg/api/avatar.png',
+		avatar: 'https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg',
 		email: '2660998832@qq.com',
 		homepage: 'https://jianges.com/',
 	},
