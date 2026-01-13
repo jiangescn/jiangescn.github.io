@@ -18,7 +18,7 @@ const basicConfig = {
 	},
 	favicon: 'https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg',
 	language: 'zh-CN',
-	timeEstablished: '2019-07-19',
+	timeEstablished: '2025-12-30',
 	timezone: 'Asia/Shanghai',
 	url: 'https://jianges.com/',
 	defaultCategory: '未分类',
