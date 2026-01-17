@@ -26,3 +26,6 @@ logs
 # Custom
 .vercel
 content/posts/test.md
+
+#纸网接入点
+app\components\widget\CommGroup.vue
