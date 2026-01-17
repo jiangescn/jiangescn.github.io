@@ -1,12 +1,12 @@
-\---
+---
 title: WUST_OJ C1-5
 description: WUST-OJ的C1-C5题集答案的分享
 date: 2026-01-08 23:07:16
 updated: 2026-01-12 18:45:28
-image: https://7.isyangs.cn/24/680072e87a129-24.webp
-categories: [经验分享]
+image: https://jianges.com/wp-content/uploads/2026/01/1767861378-wust-oj-lower.png
+categories: [代码]
 tags: [代码, 前端, 问题]
-\---
+---
 
 ## C1
 

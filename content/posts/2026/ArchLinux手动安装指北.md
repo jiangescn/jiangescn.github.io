@@ -1,12 +1,12 @@
-\---
+---
 title: Archlinux安装指北
 description: 本文系统性地介绍了在 UEFI 环境下使用 BTRFS 文件系统手动安装 Arch Linux 的完整流程，涵盖启动盘制作、网络与镜像配置、磁盘分区、基础系统安装、引导配置以及显卡与系统优化等关键步骤，适合希望深入理解 Arch Linux 安装与系统结构的用户参考。
 date: 2026-01-16 13:59:12
 updated: 2026-01-17 09:03:23
-image: https://arch.icekylin.online/images/hero.svg
+image: https://jianges.com/wp-content/uploads/2026/01/1768551164-20260116161217_381_30-scaled.png
 categories: [经验分享]
 tags: [系统, 教程, Archlinux]
-\---
+---
 
 
 ## 1. 制作启动盘
@@ -593,13 +593,13 @@ visudo
 
 ```zsh
 vim /etc/pacman.conf
-/`键搜索`multilib
-#取消两行的注释（都要取消！）
 ```
-
- [multilib] 
-
+`/`键搜索multilib
+#取消两行的注释（都要取消！）
+```zsh
+[multilib] 
 Include = /etc/pacman.d/mirrorlist
+```
 
 #### 6.0.5 添加ArchlinuxCN源
 
