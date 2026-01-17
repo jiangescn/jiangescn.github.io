@@ -1,15 +1,15 @@
 \---
 title: Archlinux安装指北
-description: WUST-OJ的C1-C5题集答案的分享
+description: 本文系统性地介绍了在 UEFI 环境下使用 BTRFS 文件系统手动安装 Arch Linux 的完整流程，涵盖启动盘制作、网络与镜像配置、磁盘分区、基础系统安装、引导配置以及显卡与系统优化等关键步骤，适合希望深入理解 Arch Linux 安装与系统结构的用户参考。
 date: 2026-01-16 13:59:12
-updated: 2026-01-16 13:59:12
+updated: 2026-01-17 09:03:23
 image: https://arch.icekylin.online/images/hero.svg
 categories: [经验分享]
 tags: [系统, 教程, Archlinux]
 \---
 
 
-# 1. 制作启动盘
+## 1. 制作启动盘
 
 ### 1.1 下载 ISO 镜像
 
@@ -27,7 +27,7 @@ Windows 下推荐使用 [Ventoy](https://www.ventoy.net/cn/doc_start.html)、[Ru
 
 在这里你需要一个8G以上的U盘，当然读写速度越快越好，制作启动盘会清空U盘里面的所有数据，需要提前做好数据备份。等待制作完毕直接点击右下角的关闭即可 千万不要再点一遍开始。
 
-# 2. 进入引导页面
+## 2. 进入引导页面
 
 ### 2.1 关闭 Secure Boot（安全启动）
 
@@ -47,7 +47,7 @@ Windows 下推荐使用 [Ventoy](https://www.ventoy.net/cn/doc_start.html)、[Ru
 
 这篇教程主要是以UEFI的方式安装，如果你的主板是只支持BIOS的老设备，在分区和安装引导的部分可能不一样，网上有很多教程可以自己查一查。
 
-# 3.正式安装（预备步骤）
+## 3.正式安装（预备步骤）
 
 ### 3.1 禁用 reflector 服务
 
@@ -107,16 +107,16 @@ reflector -a 12 -c cn -f 10 --sort score --v --save /etc/pacman.d/mirrorlist
 pacman -Sy archlinux-keyring
 ```
 
-> `-S`是`Sync`可以简单理解为安装   `y`代表更新本地的软件列表数据  `archlinux-keyring`是密钥的软件数据包名称 回车进行安装
+> `-S`是`Sync`可以简单理解为安装 `y`代表更新本地的软件列表数据 `archlinux-keyring`是密钥的软件数据包名称 回车进行安装
 
-# 4. 硬盘分区
+## 4. 硬盘分区
 
 ### 4.1 明确分区状态
 
 首先查看当前分区情况，找到自己使用的硬盘
 
 ```zsh
-lsblk-pf    #-p完整列出设备名称 -f显示更多信息
+lsblk -pf    #-p完整列出设备名称 -f显示更多信息
 ```
 
 如果不确定是不是自己使用的硬盘，可以使用`fdisk-l 设备名` 查看该硬盘更详细的信息
@@ -138,8 +138,6 @@ cfdisk /dev/nvme0n1
 明确使用那个硬盘之后我们使用cfdisk进行正式分区，如果你的硬盘是第一次使用会弹出几个选项让你选择分区模式，选择GPT即可
 
 ![img](https://jianges.com/wp-content/uploads/2026/01/1768400160-image-1024x182.png)
-
-
 
 我们首先要创建一个启动分区（当然我们可以让windows和linux共用一个引导分区，但是windows可能会搞坏linux的引导，保险起见我们为linux创建一个独立于windows的启动分区）
 
@@ -164,14 +162,14 @@ cfdisk /dev/nvme0n1
 > ```zsh
 > w
 > ```
-
+>
 > 启动分区的大小取决于你要把启动分区挂载到哪一个位置，启动分区的英文名是`EFI System Partition`简称`ESP`还可以叫`EFI分区`
 >
 > `ESP`的常用挂载点有三个`/boot` `/boot/efi` `/efi`，其中最常用的是`/boot`（boot目录用来存放内核和系统初始化相关的文件）内核文件的体积通常较大，如果`ESP`的挂载点是boot目录的话，在安装多个内核的时候就需要1g甚至2g的空间，因此很多发行版已经不把`ESP`挂载到boot了，这样`ESP`里就只存放启动相关的文件，需要的空间很小
 
 然后我们来创建根分区，选中剩余空间，选择`new`，直接回车把所有空间分配到一个分区里，类型不需要更改
 
-> 除了分区大小，另一个影响`ESP`挂载点的是根分区的文件系统。文件系统决定了文件的存储和检索方式，其中最常用的是`EXT4`和`BTRFS`。不同的文件系统有不同的特性，`EXT4`是文件系统界实用可靠的OG，但对于`ArchLinux`这样的滚动发行版来说`BTRFS`最大的特点是快照 。你可以把快照理解为游戏里的存档和回档，快照不止可以帮你恢复系统   ~~还可以让你更大胆的作死 ~~  所以我们在这里使用`BTRFS`格式。同时要注意因为ESP的文件系统必须是FAT，所以使用 `BTRFS` 快照功能的话`ESP`就不能挂载到`/boot`下。
+> 除了分区大小，另一个影响`ESP`挂载点的是根分区的文件系统。文件系统决定了文件的存储和检索方式，其中最常用的是`EXT4`和`BTRFS`。不同的文件系统有不同的特性，`EXT4`是文件系统界实用可靠的OG，但对于`ArchLinux`这样的滚动发行版来说`BTRFS`最大的特点是快照 。你可以把快照理解为游戏里的存档和回档，快照不止可以帮你恢复系统 ~~还可以让你更大胆的作死~~ 所以我们在这里使用`BTRFS`格式。同时要注意因为ESP的文件系统必须是FAT，所以使用 `BTRFS` 快照功能的话`ESP`就不能挂载到`/boot`下。
 
 分区结束之后选择`write`保存 ，输入`yes`确定保存，最后`quit`保存退出 （`ctrl + l`清屏）
 
@@ -183,9 +181,6 @@ lsblk -pf    #再次列出分区信息
 
 ```zsh
 mkfs.fat -F 32 /dev/nvme0n1p1    #把ESP格式化为FAT32
-```
-
-```zsh
 mkfs.btrfs /dev/nvme0n1p2    #把根分区格式化为BTRFS 
 ```
 
@@ -193,22 +188,19 @@ mkfs.btrfs /dev/nvme0n1p2    #把根分区格式化为BTRFS
 
 ### 4.3 创建子卷
 
-子卷是BTRFS的另一个特点，作用之一是设置快照的范围。如果我们不创建子卷，那么快照的时候就会把系统数据和用户数据一起存档。~~设想一下你只想要恢复系统数据却把你熬夜写的博客也一起恢复了  功夫白费~~
+子卷是BTRFS的另一个特点，作用之一是设置快照的范围。如果我们不创建子卷，那么快照的时候就会把系统数据和用户数据一起存档。~~设想一下你只想要恢复系统数据却把你熬夜写的博客也一起恢复了 功夫白费~~
 
-为了避免这种情况发生，我们需要创建两个同级的子卷，把系统数据和用户数据分开 
+为了避免这种情况发生，我们需要创建两个同级的子卷，把系统数据和用户数据分开
 
 ```zsh
-mount -t btrfs /dev/nvmeOn1p2 /mnt    #把根分区挂载到mnt目录
+mount -t btrfs /dev/nvme0n1p2 /mnt    #把根分区挂载到mnt目录
 ```
 
-> `mount`是挂载命令  `-t`是`type`  指定的文件是`btrfs`
+> mount 是挂载命令；-t 指定文件系统类型（例如 btrfs）
 
 ```zsh
 btrfs subvolume create /mnt/@    #用BTRFS管理工具创建root子卷 
-```
-
-```zsh
-btrfs subvolume create /mnt/@home#用BTRFS管理工具创建home子卷 
+btrfs subvolume create /mnt/@home    #用BTRFS管理工具创建home子卷 
 ```
 
 > 可能细心的你会发现我们并没有创建swap分区，交换分区的主要目的是存储内存中的冷数据，还能在内存不够用的时候把硬盘当作虚拟内存使用，还可以用来`Hibernate`休眠到硬盘，在下下次开机时恢复到上次关机时的状态（实际上感觉用起来对桌面端用户的作用不大）`Hibernate`休眠到硬盘可以完全被`Suspend`睡眠(挂起) 到内存取代。我们其实只是需要一点交换空间存放内存中的冷数据，但是比起使用硬盘做交换我们完全可以把内存中的一部分空间用来交换，这样速度更快还不会影响磁盘寿命。虚拟内存功能可以通过内存压缩技术来弥补。在后面会介绍用zram把内存的一部分当做交换空间的配置方法
@@ -236,7 +228,7 @@ mount -t btrfs -o subvol=/@,compress=zstd /dev/nvme0n1p2 /mnt
 接着把home子卷挂载到/mnt/home， 由于/mnt里边没有home目录， 所以需要加上--mkdlir选项创建目录
 
 ```zsh
---mkdir -t btrfs-o subvol=/@home,compress=zstd /dev/nvme0n1p2 /mnt/homemount
+mount --mkdir -t btrfs-o subvol=/@home,compress=zstd /dev/nvme0n1p2 /mnt/homemount
 ```
 
 最后我们要挂载ESP
@@ -245,7 +237,9 @@ mount -t btrfs -o subvol=/@,compress=zstd /dev/nvme0n1p2 /mnt
 mount --mkdir /dev/nvme0n1p1 /mnt/efi
 ```
 
-# 5 正式安装系统
+## 5. 正式安装系统
+
+### 5.1安装系统
 
 ```zsh
 pacstrap -K /mnt base base-devel linux-zen linux-firmware btrfs-progs
@@ -262,12 +256,12 @@ pacstrap -K /mnt base base-devel linux-zen linux-firmware btrfs-progs
 然后我们还需要安装一些最基本的功能性软件
 
 ```zsh
-pacstarp /mnt networkmanager vim sudo intel-ucode
+pacstrap /mnt networkmanager vim sudo intel-ucode
 ```
 
 > `networkmanager`是联网的工具，主流的桌面环境都默认使用`networkmanager`，想要完整的桌面体验就装这个，当然你也可以选择我们之前使用过的`iwd`用终端联网，一定要装联网工具否则进系统没法联网！因为我们马上要切换到安装好的系统里边编辑几个配置文件，所以需要安装一个终端文本编辑器， `sudo`用来管理权限，`intel-ucode`用来优化和修复CPU(如果使用的是AMD的话请修改成`amd-ucode`)
 
-在切换进系统前我们需要先生成fstab文件，系统在启动的时候会按照里面的内容自动完成挂载 
+在切换进系统前我们需要先生成fstab文件，系统在启动的时候会按照里面的内容自动完成挂载
 
 ```zsh
 genfstab -U /mnt > /mnt/etc/fstab
@@ -275,7 +269,7 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 > 大写`U`使用UUID指定分区， 大于号代表覆盖写入这里的文件（如果是两个大于号就代表在文件的末尾追加写入）
 
-### 5.1 进入新系统
+### 5.2 进入新系统
 
 现在用这段命令进入新安装的系统，可以注意到提示符发生了改变
 
@@ -283,9 +277,9 @@ genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt
 ```
 
-### 5.2 初期配置
+### 5.3 初期配置
 
-#### 5.2.1 设置时区
+#### 5.3.1 设置时区
 
 ```zsh
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -297,9 +291,9 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 timedatectl set-timezone Asia/Shanghai
 ```
 
-运行`timedatectl`可以看到我们时区已经变成了上海 
+运行`timedatectl`可以看到我们时区已经变成了上海
 
-#### 5.2.2 系统的本地化设置
+#### 5.3.2 系统的本地化设置
 
 首先用vim文本编辑器编辑etc目录下的locale.conf文件
 
@@ -319,7 +313,7 @@ vim /etc/locale.gen
 locale-gen
 ```
 
-接着编辑locale.conf文件设置本地化 
+接着编辑locale.conf文件设置本地化
 
 ```zsh
 vim /etc/locale.conf
@@ -345,7 +339,7 @@ vim /etc/hostname
 archlinux     #主机名只能包含小写字母数字0-9还有短横-
 ```
 
-编辑完成后`ESC`退出编辑模式`:wq`保存并退出，我们现在已经掌握了Vim的基本操作了😘
+编辑完成后`ESC`退出编辑模式`:wq`保存并退出，我们现在已经掌握了Vim的基本操作了
 
 下一步我们要设置root账户的密码
 
@@ -361,7 +355,7 @@ passwd    #不指定用户名的话默认就是修改root账户，密码存储�
 pacman -S grub efibootmgr
 ```
 
-> Grub对于初学者的我们来说功能最强大兼容性最好文档最多  ，efibootmgr用来管理EFI启动项
+> Grub对于初学者的我们来说功能最强大兼容性最好文档最多 ，efibootmgr用来管理EFI启动项
 
 接着使用grub-install命令安装引导
 
@@ -377,7 +371,7 @@ grub-install --target=x86_64-efi --efi-directory=/efi --boot-directory=/efi --bo
 ln -s /efi/grub /boot/grub    #这样对/boot/grub的操作就会反映到/efi/grub里
 ```
 
-接下来要生成grub的配置文件 
+接下来要生成grub的配置文件
 
 ```zsh
 grub-mkconfig    
@@ -389,12 +383,12 @@ grub-mkconfig
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-#### 5.2.3 Windows共存
+#### 5.3.3 Windows共存
 
 如果你安装了Windows的话接下来我们来配置双系统（两个系统在同一个物理盘内）
 
 ```zsh
-pacman -S os-erober exfat-utils
+pacman -S os-prober exfat-utils
 ```
 
 > `os-prober`用来搜索其他的系统， `exfat-utils`让我们能够找到Windows的EFI分区
@@ -418,21 +412,21 @@ vim /etc/default/grub
 GRUB_SAVEDEFAULT=true
 ```
 
-#### 5.2.4 配置GRUB
+#### 5.3.4 配置GRUB
 
-再按两下`g`键跳转到文件的开头，光标移动到这里`GRUB_DEFAULT=0 ` 按下`c`键 再按`w`键代表`change word`  删除光标所在的单词并进入编辑模式输入`saved`， 编辑完成后`ESC`退出编辑模式。
+再按两下`g`键跳转到文件的开头，光标移动到这里`GRUB_DEFAULT=0` 按下`c`键 再按`w`键代表`change word` 删除光标所在的单词并进入编辑模式输入`saved`， 编辑完成后`ESC`退出编辑模式。
 
-然后我们要让系统启动的时候显示出日志 ~~只有日志刷屏别人才知道你使用的是Arch~~  方便确认系统异常
+然后我们要让系统启动的时候显示出日志 ~~只有日志刷屏别人才知道你使用的是Arch~~ 方便确认系统异常
 
-`i`键进入编辑模式， 在`GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quite"`中编辑， 删除quiet，再把loglevel日志等级改成5， 编辑完成后`ESC`退出编辑模式`:wq`保存并退出 
+`i`键进入编辑模式， 在`GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"`中编辑， 删除quiet，再把loglevel日志等级改成5， 编辑完成后`ESC`退出编辑模式`:wq`保存并退出
 
-然后再grub-mkconfig生成一次grub的配置文件  
+然后再grub-mkconfig生成一次grub的配置文件
 
 ```zsh
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-#### 5.2.5 配置Zram内存压缩和交换空间
+#### 5.3.5 配置Zram内存压缩和交换空间
 
 最后我们来配置`Zram`内存压缩和交换空间，这可以提升系统运行速度增加可用内存
 
@@ -442,7 +436,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S zram-generator
 ```
 
-然后编辑它的配置文件， 启用`zram`并配置`zram`的大小 
+然后编辑它的配置文件， 启用`zram`并配置`zram`的大小
 
 ```zsh
 vim /etc/systemd/zram-generator.conf
@@ -460,20 +454,20 @@ compression-algorithm = zstd
 >
 > 第二行设置使用`zstd`压缩算法
 >
-> 辑完成后`ESC`退出编辑模式`:wq`保存并退出 
+> 辑完成后`ESC`退出编辑模式`:wq`保存并退出
 
 保存之后我们需要编辑grub的源文件， 在内核参数里边加上`zswap.enabled = 0`
 
-在`GRUB_CMDLINE_LINUX_DEFAULT="loglevel=5"`中编辑加上`zswap.enabled=0` 
+在`GRUB_CMDLINE_LINUX_DEFAULT="loglevel=5"`中编辑加上`zswap.enabled=0`
 
 ```zsh
 #编辑为：     （禁用zswap）
 GRUB_CMDLINE_LINUX_DEFAULT="loglevel=5 zswap.enabled=0"
 ```
 
-> `zswap`的功能是在数据写入交换空间之前先把数据压缩后暂存在内存里，它和`zram`在功能上是重复的， 我们不需要`zswap`
->
-> 编辑完成后`ESC`退出编辑模式`:wq`保存并退出 
+> zswap 的功能是在数据写入交换前先压缩并暂存在内存，这在功能上会与 zram 冲突，因此选择其中一种即可。
+> 
+> 编辑完成后`ESC`退出编辑模式`:wq`保存并退出
 
 每一次编辑完grub的源文件之后都记得要重新生成`grub.cfg` 让修改生效
 
@@ -487,7 +481,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 exit
 ```
 
-reboot重启 
+reboot重启
 
 ```zsh
 reboot
@@ -495,11 +489,11 @@ reboot
 
 此时会自动卸载所有的挂载，进BIOS把Arch的启动项改成第一个（默认应该会自动修改）
 
-#### 5.2.6 启用并启动 NetworkManager
+#### 5.3.6 启用并启动 NetworkManager
 
 进入系统之后登录root账户
 
-开启networkmanager的系统服务 
+开启networkmanager的系统服务
 
 ```zsh
 systemctl enable --now NetworkManager
@@ -515,7 +509,7 @@ systemctl enable --now NetworkManager
 
 `↑↓`键选择第二项连接wifi， 回车键可以选择， 连接完成后ESC退出
 
-#### 5.2.7 测试网络并安装fastfetch 
+#### 5.3.7 测试网络并安装fastfetch
 
 还记得如何测试网络连接吗
 
@@ -523,7 +517,7 @@ systemctl enable --now NetworkManager
 ping -c 4 bilibili.com  #-c 4 指定次数 四次
 ```
 
-然后我们安装`fastfetch`和`cmatrix` 
+然后我们安装`fastfetch`和`cmatrix`
 
 国际惯例，fetch一下显示系统LOGO和信息
 
@@ -535,7 +529,7 @@ fastfetch
 
 ~~当然接下来我们还有几道难关需要攻克~~
 
-# 6.配置驱动和基础显示
+## 6. 配置驱动和基础显示
 
 在配置快照之前我们可以做一些基本的设置
 
@@ -565,7 +559,7 @@ EDITOR=vim
 exit
 ```
 
-重新登录让环境变量生效 
+重新登录让环境变量生效
 
 #### 6.0.3创建普通账户
 
@@ -575,9 +569,9 @@ exit
 useradd -mG wheel 你的名字   
 ```
 
-> `useradd`命令创建用户， `-m`在创建用户的时候创建`home`目录， `-G`添加用户到wheel组， 这是Arch上拥有管理员权限的组 
+> `useradd`命令创建用户， `-m`在创建用户的时候创建`home`目录， `-G`添加用户到wheel组， 这是Arch上拥有管理员权限的组
 >
-> #不要用中文  ~~不过你好像也输入不了中文~~
+> 不要用中文 ~~不过你好像也输入不了中文~~
 
 然后passwd加上用户名设置密码
 
@@ -585,7 +579,7 @@ useradd -mG wheel 你的名字
 passwd 你的名字
 ```
 
-再运行visudo设置管理员权限 
+再运行visudo设置管理员权限
 
 ```zsh
 visudo
@@ -595,19 +589,17 @@ visudo
 
 #### 6.0.4 开启32位软件源
 
-32位软件源对桌面端用户来说是必须的， 这需要编辑Pacman的配置文件 
+32位软件源对桌面端用户来说是必须的， 这需要编辑Pacman的配置文件
 
 ```zsh
 vim /etc/pacman.conf
-```
-
-`/`键搜索`multilib`	
-
-```zsh
+/`键搜索`multilib
 #取消两行的注释（都要取消！）
-[multilib]
-Include = /etc/pacman.d/mirrorlist
 ```
+
+ [multilib] 
+
+Include = /etc/pacman.d/mirrorlist
 
 #### 6.0.5 添加ArchlinuxCN源
 
@@ -620,7 +612,7 @@ ArchlinuxCN源和Archlinux用户仓库的效果类似， 可以方便我们安�
 Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 ```
 
-保存之后同步数据并安装Archlinuxcn的密钥 
+保存之后同步数据并安装Archlinuxcn的密钥
 
 ```zsh
 pacman -Sy archlinuxcn-keyring
@@ -628,11 +620,11 @@ pacman -Sy archlinuxcn-keyring
 
 配置好archlinuxcn之后可以顺便下载AUR助手
 
-```
+```zsh
 pacman -S yay paru
 ```
 
-### 6.1 正式配置快照 
+### 6.1 正式配置快照
 
 ```zsh
 pacman -S snapper snap-pac btrfs-assistant grub-btrfs inotify-tools
@@ -656,7 +648,7 @@ pacman -S snapper snap-pac btrfs-assistant grub-btrfs inotify-tools
 systemctl enable --now grub-btrfsd
 ```
 
-重启一次电脑让pacmnan自动创建快照的功能生效
+重启一次电脑让pacman自动创建快照的功能生效
 
 ```zsh
 reboot
@@ -668,7 +660,7 @@ reboot
 snapper -c root create-config /
 ```
 
-> `-c`是`config`指定要使用的配置， `root`是具体的配置名称， 由于这个配置还不存在， 所以`create-config`创建它， `/`表示设置快照的范围是根目录 
+> `-c`是`config`指定要使用的配置， `root`是具体的配置名称， 由于这个配置还不存在， 所以`create-config`创建它， `/`表示设置快照的范围是根目录
 
 然后用一样的方式创建home的配置
 
@@ -692,7 +684,7 @@ snapper -c home create --description "helloworld"
 
 为了进一步让系统变得可靠， 我们要安装一个LTS长期支持内核用来备用
 
-```
+```zsh
 pacman -S linux-lts
 ```
 
@@ -714,19 +706,19 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S --needed linux-zen-headers linux-lts-headers
 ```
 
-> `--needed`代表跳过已经安装的包，  这是dkmns编译N卡驱动需要的文件
+> `--needed`代表跳过已经安装的包， 这是dkmns编译N卡驱动需要的文件
 
 浏览器搜索ArchWiki Nvidia Driver 找到N卡驱动的wiki页面， 确定自己显卡型号要安装的驱动包名
 
 这里以50系显卡为例
 
-https://nouveau.freedesktop.org/CodeNames.html
+ https://nouveau.freedesktop.org/CodeNames.html 
 
-对照表可知 驱动的包名是`nvidia-opene`
+对照表可知 驱动的包名是`nvidia-open`
 
 > nvidia-open是近年快速发展的内核模块开源的N卡驱动， 兼容性会比较好
 >
-> 不同的内核对应的后缀不同， 终端运行：`uname -r `可以显示内核信息
+> 不同的内核对应的后缀不同， 终端运行：`uname -r`可以显示内核信息
 >
 > zen内核需要安装-dkms驱动
 
@@ -747,13 +739,13 @@ Intel和AMD显卡的驱动安装要简单很多
 Intel显卡需要安装这些包 ：
 
 ```zsh
-pacman -S mesa lib32-mesa vylkan-intel lib32-vulkan-intel
+pacman -S mesa lib32-mesa vulkan-intel lib32-vulkan-intel
 ```
 
 AMD显卡需要安装这些包：
 
 ```zsh
-pacman -S mesa 1ib32-mesa xf86-yideo-amdgpu vulkan-radeon lib32-vulkan-radeon
+pacman -S mesa lib32-mesa xf86-yideo-amdgpu vulkan-radeon lib32-vulkan-radeon
 ```
 
 ### 6.3 视频编解码驱动
@@ -768,7 +760,7 @@ Intel通常安装`intel-media-driver` 或者 `libva-intel-driver`
 pacman -S intel-media-driver libva-intel-driver
 ```
 
-N卡由`nvidia-utils`提供， 但是为了让N卡支持`VAAPI`还需要安装`libva-nvidia-driver`提供`VAAPI`翻译 
+N卡由`nvidia-utils`提供， 但是为了让N卡支持`VAAPI`还需要安装`libva-nvidia-driver`提供`VAAPI`翻译
 
 ```zsh
 pacman -S --needed nvidia-utils libva-nvidia-driver
@@ -813,7 +805,7 @@ systemctl --user enable pipewire wireplumber pipewire-pulse
 安装蓝牙
 
 ```zsh
-sudo pacman -S blues
+sudo pacman -S bluez
 ```
 
 开启蓝牙服务
@@ -825,7 +817,7 @@ sudo systemctl enable --now bluetooth
 ### 6.5 性能模式切换工具
 
 ```zsh
-sudo pacman -S eower-profiles-daemon    #这个工具几乎是各个桌面端通用的
+sudo pacman -S power-profiles-daemon    #这个工具几乎是各个桌面端通用的
 ```
 
 开启服务
@@ -842,7 +834,7 @@ sudo pacman -S noto-fonts noto-fonts-emoji adobe-source-han-sans-cn-fonts
 
 > 英文字体的noto-fonts是谷歌开源字体， noto-fonts-emoji是emoji
 >
-> 中文字体的话看个人喜好，我最近使用的是思源字体
+> 中文字体的话看个人喜好，我最近使用的是思源字体 （请用 `pacman -Ss source-han` 或 AUR 搜索确认您要的具体包名。） 
 
 6.6 安装flatpak
 
@@ -850,7 +842,7 @@ sudo pacman -S noto-fonts noto-fonts-emoji adobe-source-han-sans-cn-fonts
 sudo pacman -S flatpak
 ```
 
-> flatpack拓展了比较多的的软件， Flatpak版本通常比AUR上的更好用（比如OBS和Easyeffects）
+> flatpak拓展了比较多的的软件， Flatpak版本通常比AUR上的更好用（比如OBS和Easyeffects）
 
 把Flathub的源换成上交大
 
@@ -864,13 +856,13 @@ sudo flatpak remote-modify flathub --url=https://mirrors.sjtu.edu.cn/flathub
 reboot
 ```
 
-# 7 安装桌面环境
+## 7. 安装桌面环境
 
 现在你已经做好了所有安装图形化环境前的准备
 
-#### 7.0 安装桌面环境前的准备
+### 7.0 安装桌面环境前的准备
 
-##### 7.0.1 创建备份快照
+#### 7.0.1 创建备份快照
 
 用Snapper创建root和home的快照
 
@@ -879,63 +871,63 @@ sudo snapper -c home create --description "before desktop"
 sudo snapper -c root create --description "before desktop'
 ```
 
-##### 7.0.2 选择适合你的桌面
+#### 7.0.2 选择适合你的桌面
 
 Linux的图形化环境太过丰富， 篇幅原因能挑出当下最热门的图形化环境进行介绍
 
 > 桌面环境：Desktop Environment 桌面环境（简称DE） 对于用惯了Windows的我们来说这个词代表的意思已经相当熟悉了Linux也有完整的桌面环境， 由于大家都比较熟悉就不再过多介绍。
 >
-> 窗口管理器：Window Manager 窗口管理器（简称WM）在Wayland时代你还可以叫它Wayland合成器，桌面环境其实就是基于WM做出来的，比如GNOME的WM叫做Mutter， KDEPlasma的WM叫KWin， WM只提供基础的窗口管理， 其他的像是任务栏 系统托盘 之类的东西都要自己安装。所以使用WM可以亲手搭建出属于自己的桌面环境。 当我们谈论WM的时候通常指的是自动平铺式的WM， 窗口会按照预设的逻辑自动调整大小， 除了平铺式WM还有像传统桌面的堆叠式WM， 主流的WM同时支持这两种布局， WM的另一个特点是占用极低。 
+> 窗口管理器：Window Manager 窗口管理器（简称WM）在Wayland时代你还可以叫它Wayland合成器，桌面环境其实就是基于WM做出来的，比如GNOME的WM叫做Mutter， KDEPlasma的WM叫KWin， WM只提供基础的窗口管理， 其他的像是任务栏 系统托盘 之类的东西都要自己安装。所以使用WM可以亲手搭建出属于自己的桌面环境。 当我们谈论WM的时候通常指的是自动平铺式的WM， 窗口会按照预设的逻辑自动调整大小， 除了平铺式WM还有像传统桌面的堆叠式WM， 主流的WM同时支持这两种布局， WM的另一个特点是占用极低。
 
-###### 7.0.2.1 GNOME
+##### 7.0.2.1 GNOME
 
-GNOME追求简洁， ~~但简洁过头显得有些简陋~~  我们不得不安装额外的扩展来补全桌面的功能
+GNOME追求简洁， ~~但简洁过头显得有些简陋~~ 我们不得不安装额外的扩展来补全桌面的功能
 
-###### 7.0.2.2 KDE Plasma
+##### 7.0.2.2 KDE Plasma
 
 KDEPlasma功能众多且实用， 但刚上手会觉得UI和选项有点无从下手
 
-###### 7.0.2.3 Sway
+##### 7.0.2.3 Sway
 
 Sway是非常精简的WM， 开机后的CPU占用只有0% - 1%， 内存占用只有500mb左右
 
-###### 7.0.2.4 Niri
+##### 7.0.2.4 Niri
 
 Niri也是一个非常经典的WM， 占用比Sway高几十mb， 但提供了流畅的动画和丰富的窗口布局
 
-###### 7.0.2.5 Hyprland
+##### 7.0.2.5 Hyprland
 
 当下最热门的WM叫做Hyprland~~（不接受反驳）~~ ， 以自定义极高作为卖点， 缺点是资源占用几乎接近完整的桌面环境
 
-###### 7.0.2.6 Quickshell
+##### 7.0.2.6 Quickshell
 
 如果你想要WM的独特窗口管理， 但不想费工夫自己配置， Quickshell可以提供开箱即用的桌面级WM体验
 
 主流的Quickshell是DMS和Noctalia
 
-#### 7.1桌面环境的正式安装（KDE）
+### 7.1桌面环境的正式安装（KDE）
 
 ```zsh
 sudo pacman -S Plasma konsole dolphin kate ark haruna gwenview firefox
 ```
 
-> plasma这个合集包包含了大多数Plasma桌面的组件
+> `plasma`这个合集包包含了大多数Plasma桌面的组件
 >
-> konsole是标配的终端 
+> `konsole`是标配的终端
 >
-> dolphin是标配的文档管理器 
+> `dolphin`是标配的文档管理器
 >
-> kate是标配的文本编辑器 
+> `kate`是标配的文本编辑器
 >
-> ark是标配的压缩解压缩软件
+> `ark`是标配的压缩解压缩软件
 >
-> haruna是基于Qt和MPV的视频播放器 
+> `haruna`是基于Qt和MPV的视频播放器
 >
-> gwenview是图片查看工具
+> `gwenview`是图片查看工具
 
 回车安装全部， 选择第一项`ffmpeg`
 
-配置SDDM显示管理器开机自启 
+配置SDDM显示管理器开机自启
 
 ```zsh
 sudo systemctl enable --now sddm
@@ -945,31 +937,31 @@ sudo systemctl enable --now sddm
 
 至此所有的系统安装已经全部结束了🥳😘
 
-~~但是什么软件几乎都没有安装~~  
+~~但是什么软件几乎都没有安装~~
 
-#### 7.2简单的设置和应用安装
+### 7.2简单的设置和应用安装
 
-##### 7.2.1 设置系统为中文
+#### 7.2.1 设置系统为中文
 
- 打开 `System Settings` > `Language and Regional Settings` > 在 `Language` 中点击 `Add languages...` > 选择中文加入 `ADD`，再拖拽到第一位 > 点击 `Apply`   （ 注销并重新登陆即可生效 ）
+打开 `System Settings` > `Language and Regional Settings` > 在 `Language` 中点击 `Add languages...` > 选择中文加入 `ADD`，再拖拽到第一位 > 点击 `Apply` （ 注销并重新登陆即可生效 ）
 
-##### 7.2.2 安装输入法 
+#### 7.2.2 安装输入法
 
- 安装相关软件包 
+安装相关软件包
 
 ```zsh
 sudo pacman -S fcitx5-im # 输入法基础包组
 sudo pacman -S fcitx5-chinese-addons # 官方中文输入引擎
 ```
 
- 设置环境变量。在这里我们通过使用`nano`来写入环境变量 `~/.config/environment.d/im.conf` 
+设置环境变量。在这里我们通过使用`nano`来写入环境变量 `~/.config/environment.d/im.conf`
 
 ```zsh
 sudo pacman -S nano    #安装nano
 sudo nano ~/.config/environment.d/im.conf
 ```
 
- 在文件中加入以下内容并保存退出： 
+在文件中加入以下内容并保存退出：
 
 ```zsh
 # fix fcitx problem
@@ -980,21 +972,21 @@ SDL_IM_MODULE=fcitx
 GLFW_IM_MODULE=ibus
 ```
 
- 打开 `系统设置` > `区域设置` > `输入法` 
+打开 `系统设置` > `区域设置` > `输入法`
 
- 点击提示信息中的 `运行 Fcitx` 
+点击提示信息中的 `运行 Fcitx`
 
- 点击 `添加输入法` > 找到简体中文下的 `Pinyin` > 点击 `添加` 即可加入拼音输入法 
+点击 `添加输入法` > 找到简体中文下的 `Pinyin` > 点击 `添加` 即可加入拼音输入法
 
- 接下来点击 `Pinyin` 右侧的配置按钮 > 点选 `云拼音` 和 `在程序中显示预编辑文本` > 最后点击 `应用`
+接下来点击 `Pinyin` 右侧的配置按钮 > 点选 `云拼音` 和 `在程序中显示预编辑文本` > 最后点击 `应用`
 
 注销重启即可
 
->  默认的输入法主题并不好看 [内置的Breeze](https://planet.kde.org/weng-xuetian-2022-07-04-fcitx-5-plasma-theme-support/) 要好看的多
+> 默认的输入法主题并不好看 [内置的Breeze](https://planet.kde.org/weng-xuetian-2022-07-04-fcitx-5-plasma-theme-support/) 要好看的多
 
-打开 `系统设置` > `区域设置` > `输入法`  > `配置附加组件` > `经典用户界面的⚙️`  > `主题` >` KDE Plasma (Experimental) `
+打开 `系统设置` > `区域设置` > `输入法` > `配置附加组件` > `经典用户界面的⚙️` > `主题` >`KDE Plasma (Experimental)`
 
-##### 7.2.3 以空会话启动
+#### 7.2.3 以空会话启动
 
 默认情况下，KDE 桌面环境中关机之后再开机会恢复先前保存的对话（如浏览器没有关掉，那么开机之后浏览器还在）。
 
@@ -1002,21 +994,22 @@ GLFW_IM_MODULE=ibus
 
 1. 打开 `系统设置` > 点击侧栏 `开机与关机` > `桌面会话`
 2. 将 `登入时` 的选项改为 `以空会话启动`
-3.  点击 `应用` 保存设置 
+3. 点击 `应用` 保存设置
 
-##### 7.2.4 触控板
+#### 7.2.4 触控板
 
 一般情况下，libinput 已经安装到你的电脑，触摸板应该可用。
 
 但是默认情况下，触摸板并不启用 `轻触点击`、`自然滚动` 等功能，打开 `系统设置` > 点击侧栏 `输入设备` > `触摸板` 来修改你想要的触摸板行为。
 
-##### 7.2.5 安装 Windows 字体 
+#### 7.2.5 安装 Windows 字体
 
 Windows 字体不仅日常可能会使用到，还可以让部分需要这些字体的应用（如 Wine）显示字体不会乱码。
 
 - 从本地 Windows 获取字体文件
-  1. 首先需要挂载 Windows 下的 C 盘所在分区。若分区为 Bitlocker 上锁分区，可通过 Dolphin 使用对应的恢复密钥解锁
-  2. 建立 archlinux 下存放 Windows 字体的文件夹
+
+1. 首先需要挂载 Windows 下的 C 盘所在分区。若分区为 Bitlocker 上锁分区，可通过 Dolphin 使用对应的恢复密钥解锁
+2. 建立 archlinux 下存放 Windows 字体的文件夹
 
 ```zsh
 sudo mkdir /usr/share/fonts/WindowsFonts
@@ -1044,19 +1037,19 @@ fc-cache -vf # -v：显示过程
 > yay -S ttf-ms-win11-auto-zh_cn    #原理是网络挂载 Windows 11 安装镜像并从中提取字体文件
 > ```
 
-##### 7.2.6 其他软件安装
+#### 7.2.6 其他软件安装
 
 其他软件的安装我们主要通过`AUR`来完成, 下面以 **`yay`** 为例演示
 
->  `AUR`（Arch User Repository）是 Arch Linux 社区维护的非官方软件仓库，诞生于 2005 年，旨在补充官方仓库的不足。它允许任何用户提交软件包的构建脚本（`PKGBUILD`），其他用户可通过这些脚本来编译、安装软件。 
-
-> 指北中带有 aur 角标的软件代表是在 [AUR](https://aur.archlinux.org/)（Arch User Repository）中用户自行打包的软件。不在 arch 官方支持范围内，可能会出现各种问题如更新不及时、无法安装、使用出错等。
+> `AUR`（Arch User Repository）是 Arch Linux 社区维护的非官方软件仓库，诞生于 2005 年，旨在补充官方仓库的不足。它允许任何用户提交软件包的构建脚本（`PKGBUILD`），其他用户可通过这些脚本来编译、安装软件。
 >
-> 指南中带有 cn 角标的软件代表是在 [archlinuxcn](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/)（Arch Linux 中文社区仓库）中用户自行打包的软件。不在 arch 官方支持范围内，可能会出现各种问题如更新不及时、无法安装、使用出错等。
+> ～指北中带有 aur 角标的软件代表是在 [AUR](https://aur.archlinux.org/)（Arch User Repository）中用户自行打包的软件。不在 arch 官方支持范围内，可能会出现各种问题如更新不及时、无法安装、使用出错等。
 >
-> 指南中带有 EULA 角标的软件代表是 [专有软件](https://www.gnu.org/proprietary/proprietary.html)。请自行斟酌是否使用。
+> ～指北中带有 cn 角标的软件代表是在 [archlinuxcn](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/)（Arch Linux 中文社区仓库）中用户自行打包的软件。不在 arch 官方支持范围内，可能会出现各种问题如更新不及时、无法安装、使用出错等。
+>
+> ～指北中带有 EULA 角标的软件代表是 [专有软件](https://www.gnu.org/proprietary/proprietary.html)。请自行斟酌是否使用。
 
-###### 7.2.6.1 搜索 AUR 包
+##### 7.2.6.1 搜索 AUR 包
 
 搜索包名或关键词（支持正则匹配）：
 
@@ -1069,20 +1062,62 @@ yay -Ss wechat
 输出示例：
 
 ```zsh
-aur/wechat-appimage  4.1.0-2 (+19 3.29 )
-    Nightly build of neovim
-aur/neovim-nightly 0.10.0.r598.g60191855d-1 (+3 0.00)
-    Nightly build of neovim (git HEAD)
+aur/xchat-bin 1.0.0-6 (+0 0.00) 
+    Unofficial WeChat client side built with React18 + Vite4, MobX and Electron27.(Prebuilt version.Use system-wide electron)使用 React18+Vite4、MobX 和 Electron27 构建的非官方WeChat微信客户端
+aur/plasma-wechat-toggle 1.0.0-1 (+0 0.00) 
+    Toggle WeChat window on KDE Plasma Wayland
+aur/oba-live-tool-git 1.5.9.r0.g6c9ec63-1 (+0 0.00) 
+    Live delivery tool,support Douyin,Buyin,Douyin group buying,Xiaohongshu Qianfan,WeChat Channels platform,can automatically pop up windows,automatically speak,AI help reply(Use system-wide electron)
+aur/matrix-wechat-git 0.1.0.r2.g9abc502-6 (+0 0.00) (孤包) 
+    A Matrix-WeChat puppeting bridge
+aur/electronic-wechat 2.3.3-1 (+2 0.00) 
+    Better WeChat client under Linux. Which used system Electron and removed the useless content in the package
+aur/fake-deepin-file-manager 1.0-2 (+0 0.00) 
+    Workaround the Show in Folder functionality for wechat
+aur/mejituu-wine8 8.16_plus_Mejituu_2024012516-1 (+1 0.00) 
+    wine8 for Wechat (Mejituu version)
+aur/fcitx5-theme-wechat 0.0.1-1 (+1 0.03) 
+    WeChat style fcitx5 theme
+aur/electronic-wechat-uos-bin 2.3.2-11 (+13 0.00) 
+    Linux下更好用的微信客户端. 更多功能, 更少bug. 使用系统Electron并利用UOS请求头修复了登陆问题.
+aur/com.qq.weixin.spark 3.9.10deepin1.1-1 (+31 0.00) 
+    Tencent WeChat Client from Spark Store
+aur/wechat-callout-git r4.94f9e6c-1 (+0 0.00) 
+    微信窗口快捷键唤出/隐藏
+aur/wechat-devtools-appimage 1.06.2412050-2 (+1 0.00) (过时的: 2025-06-20) 
+    The development tools for wechat projects
+aur/wechat-devtools-bin 2:1.06.2412050_2-2 (+0 0.00) 
+    WeChat Devtools For Linux.
+aur/wechat-backup 1.0.0-2 (+0 0.00) (孤包) 
+    微信聊天记录持久化备份本地硬盘，释放手机存储空间。
+aur/wechat-devtools-git 2.01.2510260-3 (+3 0.00) 
+    WeChat Devtools For Linux.
+aur/wechatircd-git r85.bb8f354-1 (+0 0.00) 
+    IRC server capable of controlling Web WeChat
+aur/wechat-devtools 2:1.06.2308310-1 (+22 0.00) (孤包) (过时的: 2024-03-02) 
+    WeChat Devtools For Linux.
+aur/wechat-bin 4.1.0.13-1 (+15 2.51) (已安装)
+    微信是一种生活方式. This is a repackage of WeChat.
+aur/wechat-universal-bwrap 4.1.0.13-1 (+137 1.32) 
+    WeChat (Universal) with bwrap sandbox
+aur/wechat-appimage 4.1.0-2 (+19 3.29) 
+    Wechat for Linux
+archlinuxcn/wine-for-wechat-debug 11.0-1 (181.3 MiB 1.1 GiB) 
+    Detached debugging symbols for wine-for-wechat
+archlinuxcn/wine-for-wechat 11.0-1 (56.2 MiB 502.6 MiB) 
+    A patched version of Wine for running Wechat and Netease Music without persistent shadow windows
+aur/wechat 1:10-1 (+48 0.25) 
+    Fixes and optional sandbox for WeChat.
 ```
 
-###### 7.2.6.2 安装 AUR 包
+##### 7.2.6.2 安装 AUR 包
 
 基本语法：`yay -S 包名`（自动处理依赖、构建、安装）。
 
-示例：安装 `neovim-nightly-bin`（Neovim  nightly 版本二进制包）：
+示例：安装 `wechar-bin`：
 
 ```zsh
-yay -S neovim-nightly-bin
+yay -S wechat-bin
 ```
 
 > 安装过程：
@@ -1093,7 +1128,7 @@ yay -S neovim-nightly-bin
 > 4. 构建二进制包（`makepkg`）。
 > 5. 调用 `pacman -U` 安装生成的 `.pkg.tar.zst` 包。
 
-###### 7.2.6.3 更新 AUR 包
+##### 7.2.6.3 更新 AUR 包
 
 AUR 包需手动更新，`yay` 可一键更新系统（官方 + AUR）：
 
@@ -1107,15 +1142,15 @@ yay  # 等价于 yay -Syu（-y 更新数据库，-u 升级包）
 yay -Sua  # -a 仅处理 AUR 包
 ```
 
-###### 7.2.6.4 卸载 AUR 包
+##### 7.2.6.4 卸载 AUR 包
 
 与 `pacman` 语法一致，使用 `-Rns` 清除依赖和配置文件：
 
 ```zsh
-yay -Rns neovim-nightly-bin  # -R 卸载，-n 清除配置，-s 清除未被依赖的依赖
+yay -Rns wechat-bin  # -R 卸载，-n 清除配置，-s 清除未被依赖的依赖
 ```
 
-###### 7.2.6.5 其他常用操作
+##### 7.2.6.5 其他常用操作
 
 | **功能**          | **命令（yay）**                             |
 | ----------------- | ------------------------------------------- |
