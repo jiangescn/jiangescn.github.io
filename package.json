@@ -4,7 +4,7 @@
   "version": "3.6.0",
   "private": true,
   "packageManager": "pnpm@10.27.0",
-  "homepage": "https://github.com/L33Z22L11/blog-v3",
+  "homepage": "https://github.com/jiangescn/jiangescn.github.io",
   "engines": {
     "node": ">=22.15 <25",
     "pnpm": ">=10"

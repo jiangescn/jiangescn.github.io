@@ -48,6 +48,57 @@ export default [
 		],
 	},
 	/* ========从此处新增友链======== */
+	// #region 云驿
+	{
+		name: '云驿',
+		desc: '从 jianges.com 主站同步的友链。',
+		// @keep-sorted { "keys": ["date"] }
+		entries: [
+			{
+				author: 'WUST-ACM',
+				sitenick: 'WUST-ACM',
+				title: 'WUST-ACM',
+				desc: '武汉科技大学ACM俱乐部',
+				link: 'https://blog.wustacm.org/',
+				icon: 'https://jianges.com/wp-content/uploads/2025/12/1765433981-微信图片_20251209220921_240_30.jpg',
+				avatar: 'https://jianges.com/wp-content/uploads/2025/12/1765433981-微信图片_20251209220921_240_30.jpg',
+				date: '2026-06-18',
+				comment: '武汉科技大学 ACM 俱乐部。',
+			},
+			{
+				author: 'aMore',
+				sitenick: 'everlasting',
+				title: 'everlasting',
+				desc: 'aMore的个人博客',
+				link: 'https://everlastingblog.top/',
+				icon: 'https://jianges.com/wp-content/uploads/2026/01/1767861756-avatar.jpg',
+				avatar: 'https://jianges.com/wp-content/uploads/2026/01/1767861756-avatar.jpg',
+				date: '2026-06-18',
+			},
+			{
+				author: 'Icho',
+				sitenick: 'Icho',
+				title: 'Icho',
+				desc: 'Icho的个人博客',
+				link: 'https://ichooooooo.github.io/',
+				icon: 'https://jianges.com/wp-content/uploads/2026/01/1768288592-avatar.jpg',
+				avatar: 'https://jianges.com/wp-content/uploads/2026/01/1768288592-avatar.jpg',
+				date: '2026-06-18',
+				error: '主站检测为访问异常',
+			},
+			{
+				author: 'shoper',
+				sitenick: 'shoper',
+				title: 'shoper',
+				desc: 'shoper\'s docs',
+				link: 'https://docs.scandidreams.top/',
+				icon: 'https://image.wustacm.org/i/2026/02/17/si2wc7.png',
+				avatar: 'https://image.wustacm.org/i/2026/02/17/si2wc7.png',
+				date: '2026-06-18',
+			},
+		],
+	},
+	// #endregion
 	// #endregion
 	// #region XUPTers
 	{

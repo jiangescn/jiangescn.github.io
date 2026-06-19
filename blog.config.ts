@@ -1,12 +1,12 @@
 import type { FeedEntry } from './app/types/feed'
 
 const basicConfig = {
-	title: '杂话铺子',
+	title: 'Jiangse',
 	subtitle: '留此一方素纸，待岁生苔|',
 	// 长 description 利好于 SEO
 	description: '兹将心事，化入岁暮之砚。不求标榜于竹帛，惟愿苔痕过雪，鸿影印沙，为逝川留一二实证。倘他年风翻此页，便算在人间，多活了一遭。',
 	author: {
-		name: '姜一',
+		name: 'Jiangse',
 		avatar: 'https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg',
 		email: '2660998832@qq.com',
 		homepage: 'https://jianges.com/',
@@ -20,7 +20,7 @@ const basicConfig = {
 	language: 'zh-CN',
 	timeEstablished: '2025-12-30',
 	timezone: 'Asia/Shanghai',
-	url: 'https://jianges.com/',
+	url: 'https://jiangescn.github.io/',
 	defaultCategory: '未分类',
 }
 
@@ -33,10 +33,13 @@ const blogConfig = {
 	article: {
 		categories: {
 			[basicConfig.defaultCategory]: { icon: 'ph:folder-dotted-bold' },
+			'WUST-OJ': { icon: 'ph:terminal-window-bold', color: '#77f' },
+			技术: { icon: 'ph:wrench-bold', color: '#3af' },
 			经验分享: { icon: 'ph:mouse-bold', color: '#3af' },
 			杂谈: { icon: 'ph:chat-bold', color: '#3ba' },
 			生活: { icon: 'ph:shooting-star-bold', color: '#f77' },
 			代码: { icon: 'ph:code-bold', color: '#77f' },
+			期末复习: { icon: 'ph:graduation-cap-bold', color: '#fa3' },
 		},
 		defaultCategoryIcon: 'ph:folder-bold',
 		/** 文章版式，首个为默认版式 */
@@ -67,33 +70,26 @@ const blogConfig = {
 	},
 
 	/** 向 <head> 中添加脚本 */
-	scripts: [
-		// 自己部署的 Umami 统计服务
-		{ 'src': 'https://zhi.zhilu.site/zhi.js', 'data-website-id': 'a1997c81-a42b-46f6-8d1d-8fbd67a8ef41', 'defer': true },
-		// 自己网站的 Cloudflare Insights 统计服务
-		{ 'src': 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "97a4fe32ed8240ac8284e9bffaf03962"}', 'defer': true },
-		// Twikoo 评论系统
-		{ src: 'https://lib.baomitu.com/twikoo/1.6.44/twikoo.min.js', defer: true },
-	],
+	scripts: [],
 
-	/** 自己部署的 Twikoo 服务 */
+	/** 自己部署的 Twikoo 服务；留空时不显示评论区 */
 	twikoo: {
-		envId: 'https://twikoo.zhilu.site/',
-		preload: 'https://twikoo.zhilu.site/',
+		envId: '',
+		preload: '',
 	},
 }
 
 /** 用于生成 OPML 和友链页面配置 */
 export const myFeed: FeedEntry = {
 	author: blogConfig.author.name,
-	sitenick: '杂话铺',
+	sitenick: blogConfig.title,
 	title: blogConfig.title,
 	desc: blogConfig.subtitle || blogConfig.description,
 	link: blogConfig.url,
 	feed: new URL('/atom.xml', blogConfig.url).toString(),
 	icon: blogConfig.favicon,
 	avatar: blogConfig.author.avatar,
-	archs: ['Nuxt', 'Vercel'],
+	archs: ['Nuxt', 'GitHub Pages'],
 	date: blogConfig.timeEstablished,
 	comment: '这是我自己',
 }

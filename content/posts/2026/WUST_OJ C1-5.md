@@ -1,12 +1,17 @@
 ---
-title: WUST_OJ C1-5
+title: WUST OJ C1-5
 description: WUST-OJ的C1-C5题集答案的分享
-date: 2026-01-08 23:07:16
-updated: 2026-01-12 18:45:28
+date: 2026-01-08 23:04:49
+updated: 2026-01-12 20:51:50
+permalink: /2026/wust-oj-c1-5
 image: https://jianges.com/wp-content/uploads/2026/01/1767861378-wust-oj-lower.png
-categories: [代码]
+categories: [WUST-OJ]
 tags: [代码, 前端, 问题]
 ---
+
+::alert{type="info" title="题解说明"}
+这篇主要保存 C1-C5 的 AC 代码，代码块已经按语言高亮；如题面更新，请以 WUST OJ 当前题面为准。
+::
 
 ## C1
 

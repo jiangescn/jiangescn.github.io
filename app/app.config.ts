@@ -46,8 +46,10 @@ export default defineAppConfig({
 		},
 
 		stats: {
+			/** 博主生日 */
+			birthday: '2007-05-10',
 			/** 归档页面每年标题对应的年龄 */
-			birthYear: 2003,
+			birthYear: 2007,
 			/** blog-stats widget 的预置文本 */
 			wordCount: '约10万',
 		},
@@ -60,8 +62,7 @@ export default defineAppConfig({
 		/** 侧边栏底部图标导航 */
 		iconNav: [
 			{ icon: 'ph:house-bold', text: '个人主页', url: blogConfig.author.homepage },
-			{ icon: 'ri:qq-line', text: '交流群: 169994096', url: 'https://jq.qq.com/?_wv=1027&k=lQfNSeEd' },
-			{ icon: 'ph:github-logo-bold', text: 'GitHub: L33Z22L11', url: 'https://github.com/L33Z22L11' },
+			{ icon: 'ph:envelope-simple-bold', text: blogConfig.author.email, url: `mailto:${blogConfig.author.email}` },
 			{ icon: 'ph:rss-simple-bold', text: 'Atom订阅', url: '/atom.xml' },
 			{ icon: 'ph:subway-bold', text: '开往', url: 'https://www.travellings.cn/' },
 		] satisfies NavItem[],
@@ -77,17 +78,17 @@ export default defineAppConfig({
 			{
 				title: '社交',
 				items: [
-					{ icon: 'ph:github-logo-bold', text: 'L33Z22L11', url: 'https://github.com/L33Z22L11' },
-					{ icon: 'ri:qq-line', text: '群: 169994096', url: 'https://jq.qq.com/?_wv=1027&k=lQfNSeEd' },
+					{ icon: 'ph:house-bold', text: '个人主页', url: blogConfig.author.homepage },
 					{ icon: 'ph:envelope-simple-bold', text: blogConfig.author.email, url: `mailto:${blogConfig.author.email}` },
 				],
 			},
 			{
 				title: '信息',
 				items: [
-					{ icon: 'simple-icons:nuxt', text: `主题: Clarity ${version}`, url: 'https://github.com/L33Z22L11/blog-v3' },
+					{ icon: 'simple-icons:nuxt', text: `主题: Clarity ${version}`, url: '/theme' },
 					{ icon: 'ph:swatches-bold', text: '主题和组件文档', url: '/theme' },
-					{ icon: 'ph:certificate-bold', text: '陕ICP备2025082251号', url: 'https://beian.miit.gov.cn/' },
+					{ icon: 'ph:certificate-bold', text: '鄂ICP备2025163616号', url: 'https://beian.miit.gov.cn/' },
+					{ icon: 'ph:shield-check-bold', text: '鄂公网安备42011102005946号', url: 'https://beian.mps.gov.cn/#/query/webSearch?code=42011102005946' },
 				],
 			},
 		] satisfies Nav,
@@ -95,7 +96,7 @@ export default defineAppConfig({
 
 	/** 左侧栏顶部 Logo */
 	header: {
-		logo: 'https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg',
+		logo: blogConfig.author.avatar,
 		/** 展示标题文本，否则展示纯 Logo */
 		showTitle: true,
 		subtitle: blogConfig.subtitle,

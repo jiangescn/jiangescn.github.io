@@ -5,10 +5,10 @@ import handleMirror from './runtime/client'
 
 const blacklist = [
 	'dgjlx.com', // blog.revincx.icu
-	'dgvhqt.com', // blog.zhilu.cyou
+	'dgvhqt.com', // 旧博客镜像域名
 	'hcmsla.com', // thyuu.com
 	'wmlop.com', // xaoxuu.com
-	'yswjxs.com', // blog.zhilu.cyou
+	'yswjxs.com', // 旧博客镜像域名
 ]
 
 export default defineNuxtModule({

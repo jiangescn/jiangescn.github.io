@@ -38,20 +38,21 @@ const PATH_APP_CONFIG = './app/app.config.ts'
 const appConfigContent = fs.readFileSync(PATH_APP_CONFIG, 'utf8')
 	.replace(/'.*?avatar.com.*?'/, 'blogConfig.author.avatar')
 	.replaceAll('L33Z22L11\'', 'octocat\'')
-	.replace('\'/theme\'', `'https://blog.zhilu.site/theme'`)
+	.replace('\'/theme\'', `'https://github.com/L33Z22L11/blog-v3'`)
 	.replace(/'.?ICP备.*?'/, '\'备案\'')
 fs.writeFileSync(PATH_APP_CONFIG, appConfigContent)
 
 // 处理 blog.config.ts
 const PATH_BLOG_CONFIG = './blog.config.ts'
 const blogConfigContent = fs.readFileSync(PATH_BLOG_CONFIG, 'utf8')
-	.replace(/'[^']*纸鹿[^']*'/g, '\'博客\'')
-	.replace(/'[^']*zhilu[^']*'/g, match => match.replace(/zhilu/, 'example'))
+	.replace(/title: '[^']*'/, 'title: \'博客\'')
+	.replace(/name: '[^']*'/, 'name: \'博主\'')
+	.replace(/'[^']*jianges[^']*'/g, match => match.replace(/jianges/, 'example'))
 fs.writeFileSync(PATH_BLOG_CONFIG, blogConfigContent)
 
 // 处理 redirects.json
 fs.writeFileSync('./redirects.json', `{
-  "/theme": "https://blog.zhilu.site/theme"
+  "/theme": "https://github.com/L33Z22L11/blog-v3"
 }`)
 
 s.stop('初始化完成')

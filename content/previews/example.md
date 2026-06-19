@@ -21,7 +21,7 @@ class: gradient-card active
 ---
 ::
 
-~~也许要看到 [本页源码](https://github.com/L33Z22L11/blog-v3/blob/main/content/previews/example.md) 才能领会到这种语法的特性~~，现在可以在页面内看源代码了，[就像**这样**——]{.example-info #just-like-this style="color: #00bb66"}，或是主题介绍页面的组件入口卡片那样……确定不对照源码阅读吗？
+~~也许要看到本页源码才能领会到这种语法的特性~~，现在可以在页面内看源代码了，[就像**这样**——]{.example-info #just-like-this style="color: #00bb66"}，或是主题介绍页面的组件入口卡片那样……确定不对照源码阅读吗？
 
 #tab2
 ```mdc wrap
@@ -34,7 +34,7 @@ class: gradient-card active
 ---
 ::
 
-~~也许要看到 [本页源码](https://github.com/L33Z22L11/blog-v3/blob/main/content/previews/example.md) 才能领会到这种语法的特性~~，现在可以在页面内看源代码了，[就像**这样**——]{.example-info #just-like-this style="color: #00bb66"}，或是主题介绍页面的组件入口卡片那样……确定不对照源码阅读吗？
+~~也许要看到本页源码才能领会到这种语法的特性~~，现在可以在页面内看源代码了，[就像**这样**——]{.example-info #just-like-this style="color: #00bb66"}，或是主题介绍页面的组件入口卡片那样……确定不对照源码阅读吗？
 ```
 ::
 
@@ -82,7 +82,7 @@ class: gradient-card active
 
 ### 链接 `ProseA`
 
-[这是内部链接](#链接-prosea)。[站外链接](https://zhilu.site) 默认在新标签页打开，并在鼠标悬浮时展示域名。
+[这是内部链接](#链接-prosea)。[站外链接](https://jianges.com) 默认在新标签页打开，并在鼠标悬浮时展示域名。
 
 还会根据域名展示图标，例如 [微软文档](https://learn.microsoft.com/zh-cn/)、[GitHub](https://github.com/)、[Bilibili](https://www.bilibili.com/)、[QQ 官网](https://im.qq.com/)、[微信公众号](https://mp.weixin.qq.com/) 等。
 
@@ -370,7 +370,7 @@ w: 我 呀 | 我 爱 | 你 | 你 爱 我 | 我 爱 你 蜜 雪 冰 城 甜 蜜 |
 #tab1
 :badge[普通带链接]{link="#badge"} :badge[纯文本指定圆形]{round} :badge[纯文本指定方形]{square} :badge[带个图]{img="https://picsum.photos/100/100"}
 
-外部域名自动获取站点图标 :badge[纸鹿]{link="https://www.zhilu.site"}，
+外部域名自动获取站点图标 :badge[Jiangse]{link="https://jianges.com"}，
 :badge[古怪杂记本]{link="https://gug.thisis.host/" square}，
 GitHub链接能自动识别头像 :badge[KazariEX]{link="https://github.com/KazariEX"}，
 也可指定方形 :badge[isYangs/GioPic]{square link="https://github.com/isYangs/GioPic"}。
@@ -386,7 +386,7 @@ GitHub链接能自动识别头像 :badge[KazariEX]{link="https://github.com/Kaza
 ```mdc wrap expand
 :badge[普通带链接]{link="#badge"} :badge[纯文本指定圆形]{round} :badge[纯文本指定方形]{square} :badge[带个图]{img="https://picsum.photos/100/100"}
 
-外部域名自动获取站点图标 :badge[纸鹿]{link="https://www.zhilu.site"}，
+外部域名自动获取站点图标 :badge[Jiangse]{link="https://jianges.com"}，
 :badge[古怪杂记本]{link="https://gug.thisis.host/" square}，
 GitHub链接能自动识别头像 :badge[KazariEX]{link="https://github.com/KazariEX"}，
 也可指定方形 :badge[isYangs/GioPic]{square link="https://github.com/isYangs/GioPic"}。
@@ -412,7 +412,7 @@ GitHub链接能自动识别头像 :badge[KazariEX]{link="https://github.com/Kaza
 ```
 ::
 
-鼠标悬浮时的动画 Emoji `📄🦌🙌🐟🏖️` 对应“纸鹿摸鱼处”的汉字，在 `app.config.ts` 中配置，字体由 [阿里妈妈方圆体](https://www.iconfont.cn/fonts/detail?cnid=pOvFIr086ADR) 分割而来。
+鼠标悬浮时的动画 Emoji 可在 `app.config.ts` 中配置，字体由 [阿里妈妈方圆体](https://www.iconfont.cn/fonts/detail?cnid=pOvFIr086ADR) 分割而来。
 
 ```sh wrap
 # iconfont 网页版生成的字体子集在 Chrome 124 的版本无法解析，需要借助 fonttools 工具手动生成子集
@@ -485,11 +485,11 @@ pyftsubset ./AlimamaFangYuanTi.ttf --text=Header文本 --flavor=woff2
 
 我们可以聊聊天
 
-{.纸鹿}
+{.Jiangse}
 
 我还可以有名字
 
-{:纸鹿撤回了一条消息}
+{:Jiangse 撤回了一条消息}
 
 {用户1}
 
@@ -510,11 +510,11 @@ pyftsubset ./AlimamaFangYuanTi.ttf --text=Header文本 --flavor=woff2
 
 我们可以聊聊天
 
-{.纸鹿}
+{.Jiangse}
 
 我还可以有名字
 
-{:纸鹿撤回了一条消息}
+{:Jiangse 撤回了一条消息}
 
 {用户1}
 
