@@ -1,8 +1,8 @@
 ---
 title: 2026 | C++ 面向对象期末复习资料
-description: C++ 面向对象程序设计期末复习笔记，整理类、对象、构造析构、继承、多态、模板、文件流和异常处理等重点。
+description: C++ 面向对象程序设计期末复习详细笔记，按概念、语法、例子和考点坑整理类、构造析构、继承、多态、模板、文件流与异常处理。
 date: 2026-06-27 21:19:34
-updated: 2026-06-27 21:19:34
+updated: 2026-06-27 21:48:27
 permalink: /2026/cpp-oop-final-review
 image: /images/cpp-oop-final-review-cover.jpg
 categories: [期末复习]
@@ -10,204 +10,861 @@ tags: [学习, "C++", 面向对象, 复习]
 ---
 
 ::alert{type="info" title="复习口径"}
-这篇是临考前整理的 C++ 面向对象复习笔记。默认已经会一点 C/C++ 基础，所以不再展开循环、数组、普通函数这些内容，重点补考试更爱问的类生命周期、访问控制、继承、多态和模板写法。
+这版是给期末用的详细笔记。它不是只列速记表，而是把每个知识点拆成概念、语法、例子和容易丢分的地方。默认已经会一点 C/C++ 基础，所以重点放在课程更爱考的对象生命周期、访问控制、继承、多态、模板和文件/异常处理。
 ::
 
-## 0. 先看复习优先级
+## 0. 复习地图
 
-课件第 16 讲里给过一份题型参考，我先按这个排复习优先级：
+我按这条主线过一遍：
 
-| 题型 | 分值 | 复习侧重点 |
-|---|---:|---|
-| 选择题 | 30 | 概念、语法合法性、访问权限、构造析构规则 |
-| 判断题 | 10 | 细节规则，如 `const`、`static`、虚函数、异常 |
-| 填空题，阅读程序写结果 | 20 | 构造/析构输出顺序、重载调用、虚函数动态绑定 |
-| 程序填空题 | 20 | 类、构造/析构、深拷贝、运算符重载、模板 |
-| 函数题 | 20 | 手写成员函数、重载、文件/异常/模板函数 |
+```text
+C++ 基础差异
+-> 函数增强
+-> 类和对象
+-> 数据共享与保护
+-> 数组、指针、字符串、动态内存
+-> 继承与派生
+-> 多态与运算符重载
+-> 模板和群体数据
+-> STL、流、异常
+```
 
-题型只当复习优先级参考，最后还是以老师通知和课堂要求为准。
+考试最容易出题的不是“会不会写 for 循环”，而是：
 
-最先看这几块：
+- 对象什么时候构造，什么时候析构。
+- 什么时候调用复制构造，什么时候调用赋值运算符。
+- 类里有指针成员时为什么默认复制会出错。
+- `private/protected/public` 在继承后怎么变化。
+- 虚函数为什么必须通过基类指针或引用才能体现动态绑定。
+- `static` 成员为什么类外初始化。
+- 常对象为什么只能调用常成员函数。
+- 运算符重载的返回值为什么有的要引用，有的不能引用。
 
-1. 构造函数、析构函数、复制构造函数、赋值运算符。
-2. 浅复制、深复制、`new/delete` 配对。
-3. 作用域、对象生存期、`static` 静态成员、友元、`const` 保护。
-4. 继承访问控制、派生类构造析构顺序、多继承二义性、虚基类。
-5. 运算符重载，尤其 `= [] << >> ++ -- + +=`。
-6. 虚函数、虚析构函数、纯虚函数、抽象类。
-7. 模板、动态数组类、`operator[]` 返回引用。
-8. 文件流、异常处理三段式。
+## 1. C++ 基础差异
 
-## 1. 总知识点大纲
+### 1.1 最小 C++ 程序
 
-| 模块 | 对应课件 | 必会知识 |
-|---|---|---|
-| C++ 简单程序 | 第 1 讲，第 1、2 章 | `iostream`、`cin/cout`、命名空间、格式控制、`const`、强制类型转换、`auto/decltype` |
-| 函数增强 | 第 2 讲，第 3 章 | 值传递、地址传递、引用传递、内联函数、默认参数、函数重载 |
-| 类和对象 | 第 3、4、5 讲，第 4 章 | 抽象、封装、访问控制、对象、成员函数、`this`、构造/析构、复制构造、类组合 |
-| 数据共享与保护 | 第 6 讲，第 5 章 | 作用域、可见性、生存期、静态成员、友元、常对象、常成员、常引用、多文件结构 |
-| 数组、指针、字符串 | 第 7 讲，第 6 章 | 对象数组、对象指针、成员指针、`new/delete`、`vector`、浅/深复制、`string` |
-| 继承与派生 | 第 8、9、10 讲，第 7 章 | 三种继承方式、类型兼容、派生类构造析构、同名隐藏、二义性、`using`、虚基类 |
-| 多态性 | 第 11、12、13 讲，第 8 章 | 静态/动态多态、运算符重载、赋值重载、Big Three、虚函数、抽象类 |
-| 模板和群体数据 | 第 14 讲，第 9 章 | 函数模板、类模板、动态数组类、链表结点、栈、队列 |
-| STL、流、异常 | 第 15、16 讲，第 10、11、12 章 | 容器、迭代器、算法、函数对象、文件流、字符串流、异常处理 |
+C++ 程序通常从 `main` 函数开始执行。
 
-## 2. 算法竞赛背景下的复习提醒
-
-平时写竞赛代码时常用“数据结构 + 函数 + 全局数组 + STL”，但这门课更容易考“类的生命周期”和“语法规则”。
-
-我会专门留意这些坑：
-
-- 竞赛里常写 `vector<int> a(n)`，但考试可能要求你手写动态数组类，必须会 `new[]`、`delete[]`、复制构造、赋值运算符。
-- 竞赛里函数参数经常写引用或指针，但这里要能区分：值传递会拷贝，引用传递不会拷贝。
-- 竞赛里不常手写析构函数，但只要类里有动态分配的指针成员，考试就很可能要求写析构、复制构造、赋值运算符。
-- 竞赛模板里的宏、短变量名、`#define int long long` 不适合直接带进类设计题。类题要按课程格式写清楚接口、成员、构造函数和返回类型。
-- 课件代码里有一些旧写法，例如 `void main()` 或 C++11 前后的规则说明。答题时优先贴合题目上下文，自己写完整程序时建议用标准 `int main()`。
-
-## 3. 第 1、2 章：C++ 基础差异
-
-### 3.1 最小 C++ 程序
+语法：
 
 ```cpp
 #include <iostream>
 using namespace std;
 
-int main() {
-    cout << "Hello, welcome to C++!" << endl;
+int main()
+{
+    cout << "Hello C++" << endl;
     return 0;
 }
 ```
 
-要点：
-
-- C++ 头文件一般无 `.h`，如 `<iostream>`、`<cmath>`、`<string>`。
-- `using namespace std;` 后可以写 `cout`，否则写 `std::cout`。
-- `cout` 是输出流对象，`cin` 是输入流对象。
-- `<<` 用于输出时叫插入运算符，`>>` 用于输入时叫提取运算符。
-- `endl` 不只是换行，还会刷新输出缓冲区；普通输出换行可用 `'\n'`。
-
-### 3.2 格式控制
-
-需要 `<iomanip>`：
+逐句看：
 
 ```cpp
-cout << setw(10) << 100 << endl;
-cout << setprecision(3) << 3.1415 << endl;
-cout << hex << 100 << dec << endl;
-
-//       100
-//3.14
-//64
+#include <iostream>
 ```
 
-必记：
+表示使用标准输入输出流库。`cout`、`cin`、`endl` 都在这个库里。
 
-- `setw(n)` 只影响紧随其后的一个输出项。
-- `setprecision(n)` 默认表示有效数字位数，不是小数位数。
-- `dec/hex/oct` 会持续生效，直到再次修改。
-- `left/right` 会持续生效。
+```cpp
+using namespace std;
+```
 
-### 3.3 常量、类型转换、类型推断
+表示使用标准命名空间。没有这一句时，要写：
+
+```cpp
+std::cout << "Hello" << std::endl;
+```
+
+```cpp
+return 0;
+```
+
+表示程序正常结束，把状态码 0 返回给操作系统。
+
+考试常见点：
+
+- 标准 C++ 主函数写 `int main()`，不要写 `void main()`。
+- C++ 标准库头文件多数不带 `.h`，例如 `<iostream>`、`<string>`、`<vector>`。
+- 老式 C 头文件在 C++ 中常写成 `<cstdio>`、`<cmath>`，而不是 `<stdio.h>`、`<math.h>`。
+
+你可以这样记：
+
+```text
+#include <iostream> 解决输入输出
+using namespace std; 省略 std::
+int main() 程序入口
+```
+
+### 1.2 `cout` 输出
+
+`cout` 是 C++ 的标准输出流对象。
+
+基本语法：
+
+```cpp
+cout << 输出内容;
+```
+
+例子：
+
+```cpp
+int x = 10;
+double pi = 3.14;
+
+cout << x << endl;
+cout << "pi = " << pi << endl;
+```
+
+输出：
+
+```text
+10
+pi = 3.14
+```
+
+`<<` 在这里叫插入运算符，含义是把右侧内容插入到输出流中。
+
+可以连续输出：
+
+```cpp
+cout << "a = " << a << ", b = " << b << endl;
+```
+
+`endl` 的作用：
+
+```cpp
+cout << "hello" << endl;
+```
+
+它做两件事：
+
+- 换行。
+- 刷新输出缓冲区。
+
+平时刷题常用 `'\n'`，因为更快：
+
+```cpp
+cout << "hello\n";
+```
+
+考试中看到 `endl`，按换行处理即可。
+
+### 1.3 `cin` 输入
+
+`cin` 是 C++ 的标准输入流对象。
+
+基本语法：
+
+```cpp
+cin >> 变量;
+```
+
+例子：
+
+```cpp
+int a, b;
+cin >> a >> b;
+cout << a + b << endl;
+```
+
+如果输入：
+
+```text
+3 5
+```
+
+输出：
+
+```text
+8
+```
+
+`>>` 在这里叫提取运算符，含义是从输入流中提取数据放入变量。
+
+注意：
+
+- `cin >> s` 读字符串时，遇到空格、Tab、回车就停止。
+- 要读整行字符串，用 `getline(cin, s)`。
+
+### 1.4 命名空间 `namespace`
+
+命名空间用来解决命名冲突。
+
+语法：
+
+```cpp
+namespace A
+{
+    int x = 10;
+}
+
+namespace B
+{
+    int x = 20;
+}
+```
+
+访问：
+
+```cpp
+cout << A::x << endl; // 10
+cout << B::x << endl; // 20
+```
+
+`::` 是作用域解析运算符。
+
+两种 `using`：
+
+```cpp
+using A::x;
+```
+
+只把 `A` 里的 `x` 引入当前作用域。
+
+```cpp
+using namespace A;
+```
+
+把 `A` 里的所有名字都引入当前作用域。
+
+考试易错：
+
+- `using namespace std;` 不是必须，只是方便。
+- 引入太多命名空间可能导致同名冲突。
+
+### 1.5 输出格式控制
+
+C++ 可以控制输出宽度、进制、精度等。
+
+需要头文件：
+
+```cpp
+#include <iomanip>
+```
+
+#### 1.5.1 `setw`
+
+`setw(n)` 设置下一个输出项的宽度。
+
+```cpp
+cout << "(" << setw(5) << 100 << ")" << endl;
+```
+
+输出类似：
+
+```text
+(  100)
+```
+
+注意：`setw` 只影响紧跟着的一个输出项。
+
+```cpp
+cout << setw(5) << 1 << 2 << endl;
+```
+
+只有 `1` 会占 5 宽度，`2` 不受影响。
+
+#### 1.5.2 `left` 和 `right`
+
+```cpp
+cout << left << setw(5) << 100 << endl;
+cout << right << setw(5) << 100 << endl;
+```
+
+`left` 左对齐，`right` 右对齐。它们会持续生效，直到改回来。
+
+#### 1.5.3 `setprecision`
+
+```cpp
+cout << setprecision(3) << 3.1415 << endl;
+```
+
+默认情况下，`setprecision(3)` 表示保留 3 位有效数字，不是小数点后 3 位。
+
+输出：
+
+```text
+3.14
+```
+
+如果要固定小数位，通常配合 `fixed`：
+
+```cpp
+cout << fixed << setprecision(3) << 3.1415 << endl;
+```
+
+输出：
+
+```text
+3.142
+```
+
+#### 1.5.4 `dec`、`hex`、`oct`
+
+```cpp
+cout << dec << 100 << endl; // 十进制
+cout << hex << 100 << endl; // 十六进制
+cout << oct << 100 << endl; // 八进制
+```
+
+注意：这些操纵符会持续生效。
+
+```cpp
+cout << hex << 100 << " " << 200 << endl;
+cout << dec << 100 << endl;
+```
+
+记忆：
+
+```text
+setw 只管下一个
+setprecision 会持续
+hex/oct/dec 会持续
+left/right 会持续
+```
+
+### 1.6 `const` 常量
+
+`const` 用来定义不能被修改的变量。
+
+语法：
+
+```cpp
+const 类型 常量名 = 初值;
+```
+
+例子：
 
 ```cpp
 const double PI = 3.1415926;
-static_cast<int>(x);
-auto x = 1;
-decltype(x) y = 2;
 ```
 
-留意：
-
-- `const int N;` 错，常量必须初始化。
-- `N = 100;` 错，常量不能再赋值。
-- `auto x; x = 10;` 错，`auto` 必须从初始化表达式推断类型。
-- `auto y1 = 12, y2 = 'C';` 错，同一条声明里的 `auto` 类型必须一致。
-- `decltype(expr)` 只取类型，不执行表达式。
-
-## 4. 第 3 章：函数
-
-### 4.1 三种参数传递
-
-值传递：
+错误写法：
 
 ```cpp
-void swap(int a, int b) {
+const int N; // 错，const 必须初始化
+N = 100;     // 错，const 不能再赋值
+```
+
+为什么要用 `const`？
+
+- 语义清楚：告诉读代码的人这个值不该改变。
+- 比宏常量更安全：有类型检查。
+
+对比：
+
+```cpp
+#define PI 3.14
+const double PI = 3.14;
+```
+
+一般更推荐 `const`。
+
+### 1.7 强制类型转换
+
+C 语言写法：
+
+```cpp
+int x = (int)y;
+```
+
+C++ 写法：
+
+```cpp
+int x = int(y);
+```
+
+标准 C++ 类型转换：
+
+```cpp
+static_cast<int>(y);
+```
+
+四种类型转换：
+
+| 转换 | 用途 |
+|---|---|
+| `static_cast` | 普通合理转换，如 `double` 转 `int` |
+| `dynamic_cast` | 类层次中的安全转换，和多态有关 |
+| `const_cast` | 去掉或添加 `const` 属性 |
+| `reinterpret_cast` | 非常底层、危险的重新解释 |
+
+考试一般重点：
+
+```cpp
+static_cast<int>(3.14)
+```
+
+结果是：
+
+```text
+3
+```
+
+记忆：
+
+```text
+static_cast：正常转
+dynamic_cast：继承转
+const_cast：改 const
+reinterpret_cast：危险转
+```
+
+### 1.8 `auto`
+
+C++11 后，`auto` 用于根据初值推断变量类型。
+
+语法：
+
+```cpp
+auto 变量名 = 初值;
+```
+
+例子：
+
+```cpp
+auto x = 1;      // int
+auto y = 3.14;   // double
+auto c = 'A';    // char
+```
+
+错误：
+
+```cpp
+auto x; // 错，无法推断类型
+x = 10;
+```
+
+同一条声明中类型必须一致：
+
+```cpp
+auto a = 1, b = 2;   // 对，都是 int
+auto x = 1, y = 2.0; // 错，一个 int 一个 double
+```
+
+算法竞赛里常见：
+
+```cpp
+for (auto x : v)
+{
+    cout << x << endl;
+}
+```
+
+### 1.9 `decltype`
+
+`decltype` 用来取得表达式的类型。
+
+语法：
+
+```cpp
+decltype(表达式) 变量名;
+```
+
+例子：
+
+```cpp
+int i = 10;
+decltype(i) j = 20; // j 是 int
+```
+
+`auto` 和 `decltype` 的区别：
+
+```text
+auto：根据初始化值推断，并定义变量
+decltype：只分析表达式类型，不执行表达式
+```
+
+例子：
+
+```cpp
+int i = 0;
+decltype(i) x = 1; // x 是 int
+```
+
+记忆：
+
+```text
+auto 看右边初值
+decltype 看括号里的表达式类型
+```
+
+## 2. 函数
+
+### 2.1 函数参数：值传递
+
+值传递就是把实参的值复制一份给形参。
+
+语法：
+
+```cpp
+void f(int x)
+{
+    x = 10;
+}
+```
+
+例子：
+
+```cpp
+void change(int x)
+{
+    x = 100;
+}
+
+int main()
+{
+    int a = 5;
+    change(a);
+    cout << a << endl; // 5
+}
+```
+
+为什么输出还是 5？
+
+因为 `x` 是 `a` 的副本。函数里改的是副本，不是原变量。
+
+交换函数错误示例：
+
+```cpp
+void swapValue(int a, int b)
+{
     int t = a;
     a = b;
     b = t;
 }
 ```
 
-不会改变实参。
-
-地址传递：
+调用：
 
 ```cpp
-void swap(int *a, int *b) {
+int x = 5, y = 10;
+swapValue(x, y);
+cout << x << " " << y << endl; // 仍然是 5 10
+```
+
+记忆：
+
+```text
+值传递：复制一份，函数内改不到外面
+```
+
+### 2.2 函数参数：地址传递
+
+地址传递就是把变量地址传给函数，函数通过指针访问原变量。
+
+语法：
+
+```cpp
+void f(int *p)
+{
+    *p = 10;
+}
+```
+
+例子：
+
+```cpp
+void change(int *p)
+{
+    *p = 100;
+}
+
+int main()
+{
+    int a = 5;
+    change(&a);
+    cout << a << endl; // 100
+}
+```
+
+交换函数：
+
+```cpp
+void swapPointer(int *a, int *b)
+{
     int t = *a;
     *a = *b;
     *b = t;
 }
 ```
 
-调用时写 `swap(&x, &y)`。
-
-引用传递：
+调用：
 
 ```cpp
-void swap(int &a, int &b) {
+swapPointer(&x, &y);
+```
+
+考试易错：
+
+- 函数形参是 `int *a`，调用时要传地址 `&x`。
+- 在函数内部要用 `*a` 访问原变量。
+
+记忆：
+
+```text
+地址传递：传地址，用 * 改原变量
+```
+
+### 2.3 函数参数：引用传递
+
+引用传递是 C++ 新增的重要内容。引用可以看成变量的别名。
+
+语法：
+
+```cpp
+void f(int &x)
+{
+    x = 10;
+}
+```
+
+例子：
+
+```cpp
+void change(int &x)
+{
+    x = 100;
+}
+
+int main()
+{
+    int a = 5;
+    change(a);
+    cout << a << endl; // 100
+}
+```
+
+交换函数：
+
+```cpp
+void swapRef(int &a, int &b)
+{
     int t = a;
     a = b;
     b = t;
 }
 ```
 
-调用时仍写 `swap(x, y)`，但会改变实参。
-
-### 4.2 引用的规则
+调用：
 
 ```cpp
-int count = 10;
-int &ref_count = count;
-cout << ref_count << endl;
-// 10
-
-count = 20;
-cout << ref_count << endl;
-// 20
+swapRef(x, y);
 ```
 
-必记：
-
-- 引用是已有变量的别名。
-- 引用定义时必须初始化。
-- 引用一旦绑定，不能再改绑到别的变量。
-- 引用类型必须匹配，`double &ref = intVar;` 这种不行。
-- 判断函数是否引用传递，不能只看调用语句，要看函数声明或定义。
-
-### 4.3 内联函数
+调用看起来和普通函数一样，所以判断是否引用传递不能看调用处，要看函数声明：
 
 ```cpp
-inline double CalArea(double r) {
-    return 3.14 * r * r;
+void swapRef(int &a, int &b);
+```
+
+引用的基本规则：
+
+```cpp
+int a = 10;
+int &r = a;
+```
+
+- 引用定义时必须初始化。
+- 引用一旦绑定，不能再改绑。
+- 引用类型必须匹配。
+- 引用不是新对象，是原变量的别名。
+
+错误：
+
+```cpp
+int &r;       // 错，未初始化
+double &d = a; // 错，类型不匹配
+```
+
+记忆：
+
+```text
+引用传递：调用像值传递，效果像指针传递
+```
+
+### 2.4 内联函数
+
+C++ 里的内联函数用关键字：
+
+```cpp
+inline
+```
+
+语法：
+
+```cpp
+inline 返回值类型 函数名(参数列表)
+{
+    函数体;
 }
 ```
 
-适合小而频繁调用的函数。优点是减少函数调用开销，缺点是可能增大代码体积。
-
-### 4.4 默认参数
+例子：
 
 ```cpp
-int add(int x, int y = 5, int z = 6);
+inline int add(int a, int b)
+{
+    return a + b;
+}
 ```
 
-规则：
+调用：
 
-- 默认参数必须从右向左连续给出。
-- 默认参数右边不能再出现无默认值参数。
-- 默认参数通常只在声明处写一次。
+```cpp
+int x = add(3, 5);
+cout << x << endl; // 8
+```
 
-判断：
+普通函数调用时，大致有：
+
+```text
+调用函数 -> 跳到函数代码处执行 -> 返回原位置
+```
+
+这个过程有函数调用开销。
+
+内联函数的想法是：编译器在编译时尽量把函数体展开到调用处。
+
+例子：
+
+```cpp
+inline int square(int x)
+{
+    return x * x;
+}
+
+int a = square(5);
+```
+
+编译器可能把它处理成类似：
+
+```cpp
+int a = 5 * 5;
+```
+
+适合情况：
+
+- 函数短小。
+- 函数简单。
+- 函数调用频繁。
+
+例子：
+
+```cpp
+inline int maxNum(int a, int b)
+{
+    return a > b ? a : b;
+}
+```
+
+类里面直接定义的函数默认具有内联性质：
+
+```cpp
+class Student
+{
+private:
+    int age;
+
+public:
+    int getAge()
+    {
+        return age;
+    }
+};
+```
+
+也可以类内声明，类外定义时加 `inline`：
+
+```cpp
+class Student
+{
+private:
+    int age;
+
+public:
+    int getAge();
+};
+
+inline int Student::getAge()
+{
+    return age;
+}
+```
+
+注意：
+
+- 写了 `inline` 不保证一定内联，最终由编译器决定。
+- 函数太复杂时不适合内联。
+- 内联可能减少调用开销，也可能让代码体积变大。
+
+不要把内联理解成“必然更快”。
+
+记忆：
+
+```text
+inline：建议编译器在调用处展开函数体，适合短小频繁调用的函数
+```
+
+### 2.5 默认参数
+
+默认参数就是在函数声明时给形参一个默认值。
+
+语法：
+
+```cpp
+返回值类型 函数名(类型 参数1, 类型 参数2 = 默认值);
+```
+
+例子：
+
+```cpp
+int add(int x, int y = 5, int z = 6)
+{
+    return x + y + z;
+}
+```
+
+调用：
+
+```cpp
+cout << add(10, 20, 30) << endl; // 60
+cout << add(10, 20) << endl;     // 36
+cout << add(10) << endl;         // 21
+```
+
+默认参数的规则：
+
+默认值必须从右向左连续给出。
+
+正确：
+
+```cpp
+int f(int x, int y = 1, int z = 2);
+```
+
+错误：
+
+```cpp
+int f(int x = 0, int y, int z = 2);
+```
+
+因为 `y` 没默认值，却在有默认值参数的右边。
+
+默认参数通常只在函数声明中写一次：
+
+```cpp
+int add(int x, int y = 5);
+
+int add(int x, int y)
+{
+    return x + y;
+}
+```
+
+考试常考判断：
 
 ```cpp
 int add1(int x, int y = 5, int z = 6); // 对
@@ -215,229 +872,659 @@ int add2(int x = 1, int y = 5, int z); // 错
 int add3(int x = 1, int y, int z = 6); // 错
 ```
 
-### 4.5 函数重载
+记忆：
 
-函数名相同，但参数个数、类型或顺序不同。
-
-```cpp
-int add(int x, int y);
-float add(float x, float y);
-double add(int x, float y, double z);
+```text
+默认参数从右往左给，中间不能断
 ```
 
-留意：
+### 2.6 函数重载
 
-- 仅返回值不同不能构成重载。
-- 默认参数可能导致调用二义性。
-- 函数重载属于静态多态，编译时决定调用哪个函数。
+函数重载指多个函数同名，但参数列表不同。
 
-## 5. 第 4 章：类和对象
+语法：
 
-### 5.1 类、对象、封装
+```cpp
+int add(int a, int b);
+double add(double a, double b);
+int add(int a, int b, int c);
+```
+
+例子：
+
+```cpp
+int add(int a, int b)
+{
+    return a + b;
+}
+
+double add(double a, double b)
+{
+    return a + b;
+}
+```
+
+调用：
+
+```cpp
+cout << add(1, 2) << endl;       // 调 int 版本
+cout << add(1.5, 2.5) << endl;   // 调 double 版本
+```
+
+什么能构成重载？
+
+- 参数个数不同。
+- 参数类型不同。
+- 参数顺序不同。
+
+什么不能构成重载？
+
+仅返回值不同不行：
+
+```cpp
+int f(int x);
+double f(int x); // 错，不能只靠返回值区分
+```
+
+函数重载属于静态多态，编译时就决定调用哪个函数。
+
+易错：
+
+默认参数和重载一起用可能产生二义性。
+
+```cpp
+void f(int x);
+void f(int x, int y = 0);
+
+f(1); // 二义性
+```
+
+记忆：
+
+```text
+重载看参数，不看返回值
+```
+
+## 3. 类和对象
+
+### 3.1 类是什么
 
 类是用户自定义类型，是对数据和操作的封装。
 
+例子：
+
 ```cpp
-class Clock {
+class Clock
+{
 public:
-    void setHour(int newH);
+    void setTime(int h, int m, int s);
     void showTime();
+
 private:
-    int hour, minute, second;
+    int hour;
+    int minute;
+    int second;
 };
 ```
 
-核心：
+这里：
 
-- 类定义本身不分配对象数据空间。
-- 声明对象时才为数据成员分配空间。
-- 成员函数在多个对象间共享一份代码。
-- 数据成员原则上设为 `private`，通过 `public` 成员函数访问。
+- `hour/minute/second` 是数据成员，表示对象状态。
+- `setTime/showTime` 是成员函数，表示对象行为。
+- `private` 表示外部不能直接访问。
+- `public` 表示对外接口。
 
-### 5.2 访问控制
+类和对象的关系：
 
-| 访问属性 | 类内 | 类外对象 | 派生类内部 |
+```cpp
+Clock c1;
+Clock c2;
+```
+
+`Clock` 是类型，`c1` 和 `c2` 是对象。
+
+类定义本身不分配对象数据空间，创建对象时才分配。
+
+重要点：
+
+```text
+对象占的内存主要存数据成员
+成员函数代码所有对象共享一份
+```
+
+### 3.2 封装
+
+封装就是把数据和操作数据的函数放在一起，并隐藏内部实现。
+
+典型写法：
+
+```cpp
+class Student
+{
+private:
+    int score;
+
+public:
+    void setScore(int s)
+    {
+        score = s;
+    }
+
+    int getScore()
+    {
+        return score;
+    }
+};
+```
+
+外部不能直接写：
+
+```cpp
+Student stu;
+stu.score = 100; // 错，score 是 private
+```
+
+应该写：
+
+```cpp
+stu.setScore(100);
+cout << stu.getScore() << endl;
+```
+
+为什么要封装？
+
+- 防止外部随便改数据。
+- 类内部实现可以改变，但接口不变。
+- 代码更安全，更容易维护。
+
+记忆：
+
+```text
+private 藏数据
+public 给接口
+```
+
+### 3.3 访问控制：`public`、`private`、`protected`
+
+类成员有三种访问权限。
+
+```cpp
+class A
+{
+public:
+    int x;
+
+protected:
+    int y;
+
+private:
+    int z;
+};
+```
+
+| 权限 | 类内 | 类外对象 | 派生类内部 |
 |---|---|---|---|
 | `public` | 可访问 | 可访问 | 可访问 |
 | `protected` | 可访问 | 不可访问 | 可访问 |
 | `private` | 可访问 | 不可访问 | 不可直接访问 |
 
-常见判断：
+对象访问：
 
 ```cpp
-class A {
+A a;
+a.x = 1; // 对
+a.y = 2; // 错
+a.z = 3; // 错
+```
+
+`protected` 的意义主要在继承中体现：外部对象不能访问，但派生类内部可以访问。
+
+考试常见：
+
+```cpp
+class A
+{
 protected:
     int x;
 };
 
-int main() {
+int main()
+{
     A a;
-    a.x = 5; // 错，对象不能访问 protected
+    a.x = 5; // 错，protected 对对象不可见
 }
 ```
 
-### 5.3 成员函数与作用域解析
+### 3.4 成员函数类外定义
 
-类外定义成员函数：
+类内声明：
 
 ```cpp
-void Clock::setHour(int newH) {
-    hour = newH;
+class Clock
+{
+public:
+    void setHour(int h);
+
+private:
+    int hour;
+};
+```
+
+类外定义：
+
+```cpp
+void Clock::setHour(int h)
+{
+    hour = h;
 }
 ```
 
-如果形参与数据成员同名：
+这里的 `Clock::` 表示 `setHour` 属于 `Clock` 类。
+
+`::` 叫作用域解析运算符。
+
+为什么类外定义仍然能访问私有成员？
+
+因为：
 
 ```cpp
-void Calendar::SetDay(int year, int month, int day) {
-    this->year = year;
-    this->month = month;
-    this->day = day;
+void Clock::setHour(int h)
+```
+
+已经说明这个函数是 `Clock` 的成员函数，所以它有访问 `Clock` 私有成员的权限。
+
+### 3.5 `this` 指针
+
+`this` 是每个非静态成员函数中隐含存在的指针，指向当前调用该函数的对象。
+
+例子：
+
+```cpp
+class Calendar
+{
+private:
+    int year;
+    int month;
+    int day;
+
+public:
+    void SetDay(int year, int month, int day)
+    {
+        this->year = year;
+        this->month = month;
+        this->day = day;
+    }
+};
+```
+
+如果没有 `this->`：
+
+```cpp
+year = year;
+```
+
+左边和右边都可能被理解为形参 `year`，达不到给数据成员赋值的目的。
+
+`this` 的常见用途：
+
+1. 区分同名形参和数据成员。
+2. 返回当前对象：
+
+```cpp
+return *this;
+```
+
+比如赋值运算符常写：
+
+```cpp
+A& operator=(const A &rhs)
+{
+    ...
+    return *this;
 }
 ```
 
-也可以写 `Calendar::year = year;`，但 `this->` 更常见。
+记忆：
 
-### 5.4 `this` 指针
+```text
+this 指向当前对象
+this->x 是当前对象的数据成员 x
+*this 是当前对象本身
+```
 
-`this` 是每个非静态成员函数中隐含的指针，指向当前调用对象。
+### 3.6 构造函数
 
-常用场景：
+构造函数用于对象创建时初始化对象。
 
-- 区分同名形参和数据成员：`this->x = x;`
-- 返回当前对象：`return *this;`
-
-### 5.5 构造函数
-
-构造函数规则：
-
-- 函数名与类名相同。
-- 没有返回值，不能写 `void`。
-- 创建对象时自动调用。
-- 通常放在 `public`。
-- 不能声明为 `const` 或 `static`。
+语法特点：
 
 ```cpp
-class Clock {
+class 类名
+{
+public:
+    类名(参数列表);
+};
+```
+
+例子：
+
+```cpp
+class Clock
+{
 public:
     Clock(int h, int m, int s);
+
 private:
-    int hour, minute, second;
+    int hour;
+    int minute;
+    int second;
 };
 
-Clock::Clock(int h, int m, int s) {
+Clock::Clock(int h, int m, int s)
+{
     hour = h;
     minute = m;
     second = s;
 }
 ```
 
-坑点：
+创建对象：
 
 ```cpp
-Clock c1;        // 调用默认构造函数
-Clock c2(1,2,3); // 调用有参构造函数
-Clock c3();      // 这是函数声明，不是对象
+Clock c(8, 30, 0);
 ```
 
-如果类中声明了任何构造函数，编译器不再自动生成默认构造函数。
+构造函数规则：
+
+- 名字和类名相同。
+- 没有返回值，不能写 `void`。
+- 创建对象时自动调用。
+- 通常放在 `public`。
+- 不能显式调用构造函数。
+
+错误：
 
 ```cpp
-class YourClass {
-public:
-    YourClass(int x, char c);
-};
-
-YourClass object1(42, 'A');        // 对
-YourClass object2;                 // 错，没有默认构造
-YourClass *p = new YourClass;      // 错，没有默认构造
-YourClass *q = new YourClass(3,'B'); // 对
+Clock c;
+c.Clock(1, 2, 3); // 错
 ```
 
-不能显式调用构造函数：
+默认构造函数：
 
 ```cpp
-Student student.Student("lbw", 1, 100); // 错
-student.Student("lbw", 1, 100);         // 错
-```
-
-### 5.6 构造函数初始化列表
-
-```cpp
-Clock::Clock(int h, int m, int s)
-    : hour(h), minute(m), second(s) {}
-```
-
-必须用初始化列表的情况：
-
-- 数据成员是 `const`。
-- 数据成员是引用。
-- 内嵌对象没有默认构造函数。
-
-注意初始化顺序：
-
-- 实际初始化顺序按数据成员在类中声明的顺序。
-- 不是按初始化列表中的书写顺序。
-
-### 5.7 委托构造函数
-
-```cpp
-class X {
-public:
-    X(string na, int co) : Name(na), Code(co) {}
-    X() : X("", 42) {}
-    X(string s) : X(s, 0) {}
-private:
-    string Name;
-    int Code;
-};
-```
-
-委托构造函数会先执行被委托构造函数的初始化列表和函数体，再回到自己函数体。
-
-### 5.8 复制构造函数
-
-我会按这个标准写：
-
-```cpp
-ClassName(const ClassName &other);
-```
-
-课件中也出现过：
-
-```cpp
-Clock(Clock &C);
-```
-
-复制构造函数在“用已有对象初始化新对象”时调用。
-
-三种常见触发：
-
-```cpp
-Clock c2(8, 10, 20);
-Clock c1(c2);       // 1. 用对象初始化对象
-
-void fun(Clock p);  // 2. 形参为对象，值传递
-fun(c2);
-
-Clock makeClock() { // 3. 返回值为对象
-    Clock A(10, 15, 0);
-    return A;
+Clock()
+{
 }
 ```
 
-留意：
+如果类中没有声明任何构造函数，编译器会自动生成默认构造函数。
 
-- 引用传递不会调用复制构造函数。
-- 返回对象时现代编译器可能优化掉临时对象，课件也提到 GCC 可能不输出复制构造信息。
-- 默认复制构造是浅复制。
-
-### 5.9 析构函数
+但是如果你写了任意一个构造函数：
 
 ```cpp
-class Clock {
+class A
+{
 public:
-    ~Clock() {}
+    A(int x);
+};
+```
+
+那么：
+
+```cpp
+A a; // 错，没有默认构造函数
+```
+
+除非你自己补：
+
+```cpp
+A() {}
+```
+
+特别坑：
+
+```cpp
+Clock c3();
+```
+
+这不是创建对象，而是声明一个函数 `c3`，返回类型是 `Clock`。
+
+记忆：
+
+```text
+构造函数：对象出生时自动调用
+有参构造写了之后，默认构造不会自动生成
+Clock c(); 是函数声明，不是对象
+```
+
+### 3.7 构造函数初始化列表
+
+初始化列表写在构造函数参数表后、函数体前。
+
+语法：
+
+```cpp
+类名::类名(参数列表) : 成员1(初值1), 成员2(初值2)
+{
+}
+```
+
+例子：
+
+```cpp
+Clock::Clock(int h, int m, int s)
+    : hour(h), minute(m), second(s)
+{
+}
+```
+
+和函数体赋值的区别：
+
+```cpp
+Clock::Clock(int h, int m, int s)
+{
+    hour = h;
+    minute = m;
+    second = s;
+}
+```
+
+这叫先默认初始化，再赋值。
+
+初始化列表是直接初始化，效率更高。
+
+必须使用初始化列表的情况：
+
+1. `const` 数据成员。
+2. 引用数据成员。
+3. 没有默认构造函数的成员对象。
+
+例子：
+
+```cpp
+class A
+{
+private:
+    const int SIZE;
+    int &ref;
+
+public:
+    A(int s, int &r) : SIZE(s), ref(r)
+    {
+    }
+};
+```
+
+成员初始化顺序：
+
+```cpp
+class A
+{
+private:
+    int x;
+    int y;
+
+public:
+    A() : y(2), x(1) {}
+};
+```
+
+虽然初始化列表写的是 `y` 再 `x`，实际初始化顺序仍按成员声明顺序：先 `x` 后 `y`。
+
+记忆：
+
+```text
+初始化顺序看类内声明顺序，不看初始化列表书写顺序
+const、引用、无默认构造成员必须用初始化列表
+```
+
+### 3.8 委托构造函数
+
+委托构造函数是一个构造函数调用同类的另一个构造函数完成初始化。
+
+例子：
+
+```cpp
+class X
+{
+private:
+    string name;
+    int code;
+
+public:
+    X(string n, int c) : name(n), code(c)
+    {
+    }
+
+    X() : X("", 42)
+    {
+    }
+
+    X(string s) : X(s, 0)
+    {
+    }
+};
+```
+
+执行顺序：
+
+```text
+先执行被委托构造函数的初始化列表和函数体
+再回到委托者自己的函数体
+```
+
+作用：
+
+- 减少多个构造函数之间重复初始化代码。
+- 让初始化逻辑集中在一个主构造函数里。
+
+### 3.9 复制构造函数
+
+复制构造函数用于用一个已有对象初始化一个新对象。
+
+语法：
+
+```cpp
+类名(const 类名 &对象名);
+```
+
+例子：
+
+```cpp
+class Clock
+{
+private:
+    int hour, minute, second;
+
+public:
+    Clock(const Clock &c)
+    {
+        hour = c.hour;
+        minute = c.minute;
+        second = c.second;
+    }
+};
+```
+
+触发复制构造的三种情况：
+
+#### 情况一：用对象初始化新对象
+
+```cpp
+Clock c1(8, 10, 20);
+Clock c2(c1);
+Clock c3 = c1;
+```
+
+`c2`、`c3` 都调用复制构造。
+
+#### 情况二：对象作为函数值参数
+
+```cpp
+void fun(Clock c)
+{
+}
+
+fun(c1);
+```
+
+因为 `c` 是一个新形参对象，要用 `c1` 初始化它。
+
+如果改成引用：
+
+```cpp
+void fun(const Clock &c)
+{
+}
+```
+
+不会调用复制构造。
+
+#### 情况三：函数返回对象
+
+```cpp
+Clock makeClock()
+{
+    Clock c(1, 2, 3);
+    return c;
+}
+```
+
+理论上可能调用复制构造。但现代编译器常做返回值优化，实际输出未必能看到复制构造调用。
+
+为什么参数通常写 `const Clock &c`？
+
+- 引用避免再次复制。
+- `const` 保证不会修改源对象。
+
+记忆：
+
+```text
+复制构造：新对象诞生时，用旧对象初始化
+```
+
+### 3.10 析构函数
+
+析构函数用于对象销毁前清理资源。
+
+语法：
+
+```cpp
+~类名()
+{
+}
+```
+
+例子：
+
+```cpp
+class A
+{
+public:
+    ~A()
+    {
+        cout << "析构" << endl;
+    }
 };
 ```
 
@@ -448,1005 +1535,1991 @@ public:
 - 没有参数。
 - 一个类只能有一个析构函数。
 - 对象生命周期结束时自动调用。
-- `new` 创建的对象在 `delete` 时调用析构函数。
 
-### 5.10 类组合
-
-类组合：一个类的数据成员是另一个类的对象。
+何时调用析构：
 
 ```cpp
-class Line {
+void f()
+{
+    A a;
+} // 离开作用域，a 析构
+```
+
+动态对象：
+
+```cpp
+A *p = new A;
+delete p; // delete 时调用析构
+```
+
+如果类中有 `new` 分配资源，通常要在析构函数中 `delete`。
+
+记忆：
+
+```text
+构造：出生
+析构：死亡
+new 出来的对象 delete 时才析构
+```
+
+### 3.11 类组合
+
+类组合就是一个类的数据成员是另一个类的对象。
+
+例子：
+
+```cpp
+class Point
+{
 private:
-    Point p1, p2;
+    int x, y;
+};
+
+class Line
+{
+private:
+    Point p1;
+    Point p2;
     double len;
 };
 ```
 
+`Line` 包含两个 `Point` 对象。
+
 构造顺序：
 
-1. 先构造成员对象，按它们在类中声明的顺序。
-2. 再执行本类构造函数体。
+```text
+先构造成员对象
+再执行本类构造函数体
+```
 
-析构顺序：
-
-1. 先执行本类析构函数体。
-2. 再析构成员对象，顺序与构造相反。
-
-复制构造：
+例子：
 
 ```cpp
-Line::Line(const Line &L) : p1(L.p1), p2(L.p2) {
+Line::Line(Point a, Point b) : p1(a), p2(b)
+{
+    // 这里执行时，p1 和 p2 已经构造好了
+}
+```
+
+成员对象构造顺序由成员声明顺序决定：
+
+```cpp
+class Line
+{
+private:
+    Point p1;
+    Point p2;
+};
+```
+
+先 `p1`，再 `p2`。
+
+析构顺序反过来：
+
+```text
+先执行 Line 的析构函数体
+再析构 p2
+再析构 p1
+```
+
+复制构造中，如果自己写了复制构造，要在初始化列表中初始化成员对象：
+
+```cpp
+Line::Line(const Line &L) : p1(L.p1), p2(L.p2)
+{
     len = L.len;
 }
 ```
 
-### 5.11 前向引用声明
+记忆：
+
+```text
+组合构造：先人后己
+组合析构：先己后人
+```
+
+### 3.12 前向引用声明
+
+如果两个类互相引用，可以先声明类名。
+
+语法：
+
+```cpp
+class B;
+```
+
+例子：
 
 ```cpp
 class B;
 
-class A {
+class A
+{
 public:
     void f(B *b);
 };
 ```
 
-前向声明后可以声明指针或引用，但在完整类定义前不能：
+前向声明只告诉编译器：“有一个类叫 B”。
 
-- 声明该类对象作为成员。
-- 在内联函数中使用该类对象的具体成员。
-
-### 5.12 `struct`、`union`
-
-`struct` 和 `class` 的主要区别：
-
-- `struct` 默认成员访问权限是 `public`。
-- `class` 默认成员访问权限是 `private`。
-
-`union`：
-
-- 所有成员共享同一片内存。
-- 任意时刻通常只有一个成员有效。
-- 课件中强调限制：联合体不适合包含有复杂构造、析构、赋值行为的对象成员。
-
-## 6. 第 5 章：数据的共享与保护
-
-这一章补的是“名字在哪里有效、对象活多久、类里哪些东西共享、共享后怎么保护”。它不像继承和多态那么显眼，但很适合出选择、判断、找错和填空。
-
-### 6.1 作用域与可见性
-
-作用域：标识符在程序中有效的区域。
-
-可见性：从某个引用位置向外看，能不能看见某个标识符。
-
-C++ 中课件列出的作用域：
-
-| 作用域 | 典型例子 |
-|---|---|
-| 函数原型作用域 | `double Area(double radius);` 中的 `radius` |
-| 局部作用域/块作用域 | 函数体、`if` 块、循环块内声明的变量 |
-| 类作用域 | 类的数据成员、成员函数名 |
-| 文件作用域 | 全局变量，从声明处到文件尾 |
-| 命名空间作用域 | `namespace X { ... }` 中的名字 |
-| 限定作用域的枚举类 | `enum class Color { red };` |
-
-核心规则：
-
-- 标识符先声明，后引用。
-- 同一作用域中不能声明同名标识符，函数重载除外。
-- 没有包含关系的不同作用域中，同名标识符互不影响。
-- 有包含关系时，内层同名标识符会隐藏外层同名标识符。
-- 外层声明且内层没有同名声明，则外层标识符在内层可见。
-- 这些规则不只适用于变量，也适用于常量、类型名、函数名、枚举值等。
-
-例：
+在完整定义前可以：
 
 ```cpp
-#include <iostream>
-using namespace std;
+B *p;
+B &r;
+```
 
-int i; // 文件作用域
+不能：
 
-int main() {
-    i = 5;
+```cpp
+B obj; // 错，不知道 B 有多大
+```
+
+也不能在类内内联函数里访问 B 的成员：
+
+```cpp
+class B;
+
+class A
+{
+public:
+    void f(B *b)
     {
-        int i;
-        i = 7;
-        cout << i << endl; // 7，内层 i 隐藏外层 i
+        b->g(); // 错，还不知道 B 里有没有 g
     }
-    cout << i << endl; // 5，全局 i
-}
-```
-
-### 6.2 命名空间
-
-命名空间用于解决命名冲突。
-
-```cpp
-namespace LWJNS {
-    class DayOfYear {
-    public:
-        DayOfYear(int y, int m, int d);
-    };
-}
-
-LWJNS::DayOfYear d1(2012, 3, 5);
-```
-
-两种 `using`：
-
-```cpp
-using LWJNS::DayOfYear; // 只暴露 DayOfYear
-using namespace LWJNS;  // 暴露整个命名空间
-```
-
-考试判断点：
-
-- `using namespace` 方便，但可能重新引入命名冲突。
-- `类名::成员名`、`命名空间名::标识符` 都是作用域解析。
-
-### 6.3 限定作用域的枚举类
-
-普通枚举：
-
-```cpp
-enum color { red, yellow, green };
-color c = red;
-```
-
-限定作用域枚举：
-
-```cpp
-enum class color2 { red, yellow, green };
-color2 c3 = color2::red;
-```
-
-留意：
-
-```cpp
-color2 c1 = red; // 错，red 不直接暴露在外层作用域
-```
-
-### 6.4 对象的生存期
-
-对象生存期：对象从产生到结束的时间段。
-
-静态生存期：
-
-- 与程序运行期相同。
-- 命名空间作用域中的对象通常是静态生存期。
-- 函数内部用 `static` 声明的对象也是静态生存期。
-- 未显式初始化的静态对象默认初始化为 0。
-
-```cpp
-int i = 5; // 全局变量，静态生存期
-
-int main() {
-    static int j; // 静态生存期，默认 0
-}
-```
-
-动态生存期：
-
-- 局部作用域中，没有 `static` 修饰的对象。
-- 执行到声明点时产生。
-- 离开所在块时结束。
-- 课件提到 `auto`，在这里是旧意义的自动存储对象，可省略；不要和 C++11 类型推断混淆。
-
-### 6.5 类的静态数据成员
-
-静态数据成员用于同一类所有对象之间共享数据。
-
-```cpp
-class Employee {
-private:
-    int empNo;
-    char *name;
-    static int count; // 类内声明
-};
-
-int Employee::count = 0; // 类外定义并初始化
-```
-
-必记：
-
-- `static` 数据成员是类的成员，不是某个对象独有的成员。
-- 所有对象共享同一个副本。
-- 静态数据成员具有静态生存期。
-- 一般必须在类外定义和初始化，用 `类名::成员名`。
-- 类外初始化静态数据成员时，不受 `private` 访问权限限制，因为这是定义性说明。
-
-普通数据成员 vs 静态数据成员：
-
-| 项目 | 普通数据成员 | 静态数据成员 |
-|---|---|---|
-| 副本数量 | 每个对象一份 | 全类共享一份 |
-| 创建时机 | 对象实例化时 | 编译/链接层面分配 |
-| 生存期 | 随对象 | 静态生存期 |
-| 典型访问 | `obj.x`、`p->x` | `Class::x`、`obj.x`、`p->x` |
-
-课件第 16 讲也补充了一个特例：
-
-```cpp
-class A {
-public:
-    const static int N = 100; // 整型 const static 可在类内初始化
 };
 ```
 
-一般静态数据成员仍按“类内声明，类外初始化”记。
+要在 B 完整定义后再写函数体。
 
-### 6.6 静态成员函数
+### 3.13 `struct` 和 `class`
+
+C++ 中 `struct` 和 `class` 功能几乎一样。
+
+区别主要是默认访问权限：
 
 ```cpp
-class Apple {
-public:
-    static void ShowCount();
+struct S
+{
+    int x; // 默认 public
 };
 
-Apple::ShowCount();
+class C
+{
+    int x; // 默认 private
+};
 ```
+
+因此：
+
+```cpp
+S s;
+s.x = 1; // 对
+
+C c;
+c.x = 1; // 错
+```
+
+记忆：
+
+```text
+struct 默认 public
+class 默认 private
+```
+
+### 3.14 `union`
+
+`union` 的多个成员共享同一片内存。
+
+例子：
+
+```cpp
+union Mark
+{
+    char grade;
+    bool pass;
+    int percent;
+};
+```
+
+如果 `int` 占 4 字节，则整个 `union` 通常占 4 字节，因为要容纳最大成员。
+
+特点：
+
+- 成员共用内存。
+- 同一时刻一般只有一个成员有效。
+- 给一个成员赋值会覆盖另一个成员的数据。
+
+例子：
+
+```cpp
+union U
+{
+    int i;
+    float f;
+};
+
+U u;
+u.i = 10;
+u.f = 2.2; // 此时 i 的值被覆盖
+```
+
+## 4. 数据的共享与保护
+
+### 4.1 作用域
+
+作用域指一个标识符有效的范围。
+
+常见作用域：
+
+- 函数原型作用域。
+- 局部作用域。
+- 类作用域。
+- 文件作用域。
+- 命名空间作用域。
+- 枚举类限定作用域。
+
+例子：
+
+```cpp
+int x = 1; // 文件作用域
+
+void f()
+{
+    int x = 2; // 局部作用域
+    cout << x << endl; // 2
+}
+```
+
+内层同名变量会隐藏外层变量。
 
 规则：
 
-- 静态成员函数用 `static` 声明。
-- 可以用 `类名::函数名()` 调用，也可以用对象调用。
-- 静态成员函数没有 `this` 指针。
-- 只能直接访问静态数据成员和静态成员函数。
-- 不能直接访问非静态数据成员和非静态成员函数。
-- 静态成员函数不能用 `const` 修饰，因为 `const` 成员函数依赖 `this`，而静态成员函数没有 `this`。
+```text
+先声明，后使用
+同一作用域不能重复声明同名变量
+内层同名隐藏外层同名
+```
 
-找错经典：
+### 4.2 可见性
+
+可见性是从某个位置能不能引用某个标识符。
+
+例子：
 
 ```cpp
-class Myclass {
+int i = 5;
+
+int main()
+{
+    {
+        int i = 7;
+        cout << i << endl; // 7
+    }
+    cout << i << endl; // 5
+}
+```
+
+虽然全局 `i` 的作用域包含整个文件，但在内层块中被局部 `i` 隐藏，所以暂时不可见。
+
+作用域和可见性区别：
+
+```text
+作用域：理论上有效的区域
+可见性：当前位置实际能不能看见它
+```
+
+### 4.3 对象生存期
+
+生存期指对象从产生到销毁的时间。
+
+静态生存期：
+
+```cpp
+int g = 1;
+
+void f()
+{
+    static int cnt = 0;
+    cnt++;
+}
+```
+
+`g` 和 `cnt` 都有静态生存期，和程序运行期相同。
+
+动态生存期：
+
+```cpp
+void f()
+{
+    int x = 0;
+} // x 在这里结束
+```
+
+局部非 `static` 对象从声明处开始，到块结束结束。
+
+记忆：
+
+```text
+static 活到程序结束
+普通局部变量活到块结束
+```
+
+### 4.4 静态数据成员
+
+静态数据成员属于类，不属于某个对象。
+
+语法：
+
+```cpp
+class A
+{
+private:
+    static int count;
+};
+
+int A::count = 0;
+```
+
+为什么需要静态数据成员？
+
+假设要统计某个类创建了多少对象。如果把 `count` 放在每个对象里：
+
+```cpp
+class A
+{
+private:
+    int count;
+};
+```
+
+每个对象都有一个 `count`，不能表示全类总数。
+
+所以用：
+
+```cpp
+static int count;
+```
+
+所有对象共享一份。
+
+访问方式：
+
+```cpp
+A::count;
+obj.count;
+p->count;
+```
+
+如果是 `private`，外部不能访问，但类外初始化允许：
+
+```cpp
+int A::count = 0;
+```
+
+这是定义，不是普通访问。
+
+考试重点：
+
+- 静态数据成员类内声明。
+- 一般类外定义并初始化。
+- 所有对象共享一份。
+- 静态数据成员有静态生存期。
+
+### 4.5 静态成员函数
+
+静态成员函数属于类，不依赖具体对象。
+
+语法：
+
+```cpp
+class A
+{
 public:
-    static int fun(Myclass m);
+    static void show();
+};
+
+void A::show()
+{
+}
+```
+
+调用：
+
+```cpp
+A::show();
+```
+
+也可以：
+
+```cpp
+A a;
+a.show();
+```
+
+但本质上它不依赖对象。
+
+重要规则：
+
+静态成员函数没有 `this` 指针。
+
+所以它不能直接访问非静态成员：
+
+```cpp
+class A
+{
 private:
     int x;
-    static int y = 9; // 一般写法错误，应类外初始化
+    static int y;
+
+public:
+    static void f()
+    {
+        y = 1; // 对
+        x = 2; // 错，没有 this，不知道是哪个对象的 x
+    }
 };
-
-int Myclass::fun(Myclass m) {
-    cout << x + y;   // 错，静态函数不能直接访问非静态 x
-    return m.x + y;  // 对，通过对象 m 访问 x
-}
-
-int Myclass::y = 9;
 ```
 
-### 6.7 友元函数
-
-友元是一个类主动授予外部函数或其他类访问本类私有/保护成员的权限。
-
-友元函数声明：
+如果想访问非静态成员，必须通过对象：
 
 ```cpp
-class Point {
-public:
-    friend float fDist(Point &p1, Point &p2);
+static void f(A a)
+{
+    cout << a.x << endl;
+}
+```
+
+静态成员函数也不能写成 `const`：
+
+```cpp
+static void f() const; // 错
+```
+
+因为 `const` 成员函数修饰的是 `this` 指向的对象，而静态函数没有 `this`。
+
+### 4.6 友元函数
+
+友元函数是定义在类外的普通函数，但它被某个类授权访问该类私有成员。
+
+声明：
+
+```cpp
+class Point
+{
 private:
-    float x, y;
+    double x, y;
+
+public:
+    friend double dist(Point &a, Point &b);
 };
 ```
 
-友元函数定义：
+定义：
 
 ```cpp
-float fDist(Point &p1, Point &p2) {
-    double x = p1.x - p2.x;
-    double y = p1.y - p2.y;
-    return static_cast<float>(sqrt(x * x + y * y));
+double dist(Point &a, Point &b)
+{
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+    return sqrt(dx * dx + dy * dy);
 }
 ```
 
-留意：
+注意：
 
-- `friend` 只写在类内声明处。
-- 函数定义时不要再写 `friend`。
-- 友元函数不是类成员函数，不能用对象点号调用。
-- 友元函数虽然不是成员函数，但有访问该类私有成员的权限。
-- 友元声明可放在类中任何区域，通常放在 `public`。
+- `friend` 只在类内声明时写。
+- 类外定义不要写 `friend`。
+- 友元函数不是成员函数。
+- 不能用 `p.dist()` 调用。
+- 友元函数可以直接访问私有成员。
 
-### 6.8 友元类
+为什么要用友元？
+
+有时某个函数逻辑上需要访问两个对象的私有数据，但它又不适合作为其中一个对象的成员函数。
+
+比如求两点距离：
 
 ```cpp
-class A {
-public:
+dist(p1, p2);
+```
+
+比写成：
+
+```cpp
+p1.dist(p2);
+```
+
+有时更自然。
+
+### 4.7 友元类
+
+一个类可以把另一个类声明为友元类。
+
+语法：
+
+```cpp
+class A
+{
+    friend class B;
+
+private:
+    int x;
+};
+```
+
+这样 `B` 的所有成员函数都可以访问 `A` 的私有成员。
+
+例子：
+
+```cpp
+class A
+{
     friend class B;
 private:
     int x;
 };
 
-class B {
+class B
+{
 public:
-    void Set(A &a, int i) {
-        a.x = i; // B 是 A 的友元类，可以访问 A::x
+    void set(A &a, int v)
+    {
+        a.x = v;
     }
 };
 ```
 
-友元关系三条铁律：
+友元关系的三个规则：
 
-- 不能传递：A 友元 B，B 友元 C，不代表 C 是 A 的友元。
-- 单向：A 声明 B 为友元，不代表 A 自动成为 B 的友元。
-- 不被继承：基类的友元关系不会自动给派生类。
-
-友元不会“自己宣布”，必须由被访问的类在类内声明。
-
-### 6.9 共享数据的保护：`const`
-
-共享数据可能破坏安全性，所以把“要共享但不能改”的数据声明为常量。
-
-`const` 可以修饰：
-
-- 基本类型常量。
-- 常对象。
-- 常成员函数。
-- 常数据成员。
-- 常引用。
-- 常数组。
-- 指向常量的指针。
-- 函数参数和返回值。
-
-### 6.10 常对象
-
-```cpp
-const Point p1(1, 1);
+```text
+不传递
+不对称
+不继承
 ```
 
-常对象的数据成员在整个对象生存期内不能被修改。
+解释：
 
-常对象只能调用常成员函数，不能调用普通成员函数。
+- A 把 B 当友元，B 把 C 当友元，不代表 C 是 A 的友元。
+- A 把 B 当友元，不代表 B 也把 A 当友元。
+- 基类的友元关系不会自动传给派生类。
 
-### 6.11 常成员函数
+### 4.8 常对象
 
-声明和定义都要带 `const`：
+常对象是不能被修改的对象。
+
+语法：
 
 ```cpp
-class Point {
+const 类名 对象名(参数);
+```
+
+例子：
+
+```cpp
+const Point p(1, 2);
+```
+
+常对象的数据成员不能被修改。
+
+常对象只能调用常成员函数。
+
+```cpp
+class Point
+{
 public:
-    int GetX() const;
-private:
-    int X;
+    int getX() const;
+    void setX(int x);
 };
 
-int Point::GetX() const {
-    return X;
+const Point p;
+p.getX(); // 对
+p.setX(1); // 错
+```
+
+为什么？
+
+`setX` 可能修改对象，而 `p` 是常对象。
+
+### 4.9 常成员函数
+
+常成员函数承诺不修改目的对象。
+
+语法：
+
+```cpp
+返回类型 函数名(参数列表) const;
+```
+
+声明和定义都要写 `const`：
+
+```cpp
+class Point
+{
+private:
+    int x;
+
+public:
+    int getX() const;
+};
+
+int Point::getX() const
+{
+    return x;
 }
 ```
 
-规则：
+常成员函数内部不能修改普通数据成员：
 
-- `const` 是函数类型的一部分。
-- 常对象只能调用常成员函数。
-- 非常对象也可以调用常成员函数。
-- 常成员函数执行期间，目的对象被视为常对象。
-- 常成员函数不能修改普通数据成员。
-- 常成员函数不能调用非 `const` 成员函数。
-- 构造函数和析构函数不能是 `const` 成员函数。
-- `const` 可以参与函数重载区分：
+```cpp
+int Point::getX() const
+{
+    x++; // 错
+    return x;
+}
+```
+
+也不能调用非 `const` 成员函数：
+
+```cpp
+void setX(int v);
+
+int getX() const
+{
+    setX(1); // 错
+}
+```
+
+`const` 可以参与重载：
 
 ```cpp
 void print();
 void print() const;
 ```
 
-找错：
+构造函数和析构函数不能是 `const`。
+
+记忆：
+
+```text
+常对象只能调常函数
+常函数不能改对象
+声明和定义都写 const
+```
+
+### 4.10 常数据成员
+
+常数据成员是类中的 `const` 数据成员。
+
+例子：
 
 ```cpp
-class Stack {
-public:
-    int GetCount() const;
-    int Pop();
+class A
+{
 private:
-    int num;
-};
+    const int SIZE;
 
-int Stack::GetCount() const {
-    ++num; // 错，常成员函数不能改数据成员
-    Pop(); // 错，常成员函数不能调用非 const 成员函数
-    return num;
+public:
+    A(int size) : SIZE(size)
+    {
+    }
+};
+```
+
+常数据成员必须在初始化列表中初始化。
+
+错误：
+
+```cpp
+A::A(int size)
+{
+    SIZE = size; // 错，函数体里是赋值，不是初始化
 }
 ```
 
-### 6.12 常数据成员
+原因：
+
+`const` 成员一旦初始化之后不能再赋值，所以必须在对象构造阶段直接初始化。
+
+### 4.11 常引用
+
+常引用语法：
 
 ```cpp
-class A {
-public:
-    A(int size);
+const 类型 &引用名 = 对象;
+```
+
+例子：
+
+```cpp
+void printPoint(const Point &p)
+{
+    cout << p.getX() << endl;
+}
+```
+
+作用：
+
+- 避免对象值传递带来的复制开销。
+- 防止函数内部修改实参对象。
+
+常引用可以绑定普通对象：
+
+```cpp
+Point p;
+const Point &r = p;
+```
+
+也可以绑定常对象：
+
+```cpp
+const Point cp;
+const Point &r = cp;
+```
+
+普通引用不能绑定常对象：
+
+```cpp
+Point &r = cp; // 错
+```
+
+通过常引用，只能调用常成员函数。
+
+记忆：
+
+```text
+类对象参数优先考虑 const 引用
+```
+
+### 4.12 多文件结构
+
+大程序通常拆成多个文件。
+
+常见结构：
+
+```text
+ClassName.h      类声明
+ClassName.cpp    类成员函数定义
+main.cpp         使用类
+```
+
+例子：
+
+`Point.h`：
+
+```cpp
+#ifndef POINT_H
+#define POINT_H
+
+class Point
+{
 private:
-    const int SIZE;
+    int x, y;
+public:
+    Point(int x, int y);
+    int getX() const;
 };
 
-A::A(int size) : SIZE(size) {}
+#endif
 ```
 
-常数据成员必须通过构造函数初始化列表初始化。
-
-课件找错：
+`Point.cpp`：
 
 ```cpp
-class A {
-    const int SIZE = 100; // 按课件语境：错误，不能在类声明中这样初始化普通 const 数据成员
-    int array[SIZE];      // 错，SIZE 此处不能这样作为数组大小
-};
+#include "Point.h"
+
+Point::Point(int x, int y) : x(x), y(y)
+{
+}
+
+int Point::getX() const
+{
+    return x;
+}
 ```
 
-实际写考试时按题目标准和课件语境答；现代 C++ 对类内初始化有所放宽，但课程常按传统规则考。
-
-### 6.13 常引用
+`main.cpp`：
 
 ```cpp
-const Point &p1 = point;
+#include <iostream>
+#include "Point.h"
+using namespace std;
+
+int main()
+{
+    Point p(1, 2);
+    cout << p.getX() << endl;
+}
 ```
 
-规则：
+### 4.13 预处理和头文件保护
 
-- 常引用不能通过该引用修改对象。
-- 非 `const` 引用不能绑定到常对象。
-- 常引用可以绑定到常对象，也可以绑定到普通对象。
-- 通过常引用访问对象时，该对象被当作常对象，不能调用非 `const` 成员函数。
-
-推荐：
+`#include`：
 
 ```cpp
-void PrintPoint(const Point &p);
+#include <iostream>
+#include "Point.h"
 ```
 
-类对象作函数参数时，`const 引用` 通常比值传递更高效，也能防止误修改。
-
-指针参数也可用 `const` 保护源数据：
-
-```cpp
-void StringCopy(char *dest, const char *src);
-```
-
-### 6.14 多文件结构
-
-较大 C++ 程序通常拆成：
-
-| 文件 | 内容 |
-|---|---|
-| `.h` | 类定义、函数声明 |
-| `.cpp` | 类成员函数实现 |
-| `main.cpp` | 使用类，写主函数 |
-
-示意：
-
-```cpp
-// main.cpp
-#include "file1.h"
-#include "file2.h"
-```
-
-### 6.15 编译预处理
-
-包含文件：
-
-```cpp
-#include <iostream>  // 标准库头文件
-#include "head.h"    // 先在当前目录找
-```
+尖括号一般用于系统头文件，双引号一般用于自定义头文件。
 
 宏定义：
 
 ```cpp
-#define PI 3.1415926
-#undef PI
+#define PI 3.14
 ```
 
-课件提醒：很多符号常量可用 `const` 替代，很多带参数宏可用内联函数替代。
+但 C++ 中很多情况更推荐：
+
+```cpp
+const double PI = 3.14;
+```
 
 条件编译：
 
 ```cpp
-#if TEST
-    ...
-#else
-    ...
-#endif
-```
-
-```cpp
 #ifdef DEBUG
-    cerr << "debug";
+cout << "debug info" << endl;
 #endif
 ```
 
 头文件保护：
 
 ```cpp
-#ifndef HEAD_H
-#define HEAD_H
+#ifndef POINT_H
+#define POINT_H
 
-class Point {
-    ...
-};
+// 头文件内容
 
 #endif
 ```
 
-作用：防止同一个头文件被重复包含导致重复定义。
+作用：防止同一个头文件被重复包含。
 
-## 7. 第 6 章：数组、指针、字符串
+记忆：
 
-### 7.1 数组作为函数参数
-
-数组名作参数时传首地址，对形参数组的修改会影响实参数组。
-
-```cpp
-void rowSum(int a[][4], int nRow);
+```text
+#ifndef 没定义才进入
+#define 定义宏
+#endif 结束
 ```
 
-二维数组作参数时，第二维大小通常必须写明。
+## 5. 数组、指针、字符串和动态内存
 
-### 7.2 对象数组
+### 5.1 数组作为函数参数
 
-```cpp
-Clock C[2];
-Point A[2] = {Point(1, 2), Point(3, 4)};
-Point B[2] = {Point(1, 2)}; // 第二个元素调用默认构造
-```
+数组名作为函数参数时，传递的是数组首地址。
 
-留意：
-
-- 每个数组元素都是对象。
-- 每个元素创建时都会调用构造函数。
-- 数组释放时每个元素都会调用析构函数。
-
-### 7.3 指针数组和数组指针
+例子：
 
 ```cpp
-int *p[10];    // 指针数组，p 是数组，每个元素是 int*
-int (*q)[3];   // 数组指针，q 是指针，指向含 3 个 int 的数组
+void change(int a[])
+{
+    a[0] = 100;
+}
+
+int main()
+{
+    int x[3] = {1, 2, 3};
+    change(x);
+    cout << x[0] << endl; // 100
+}
 ```
 
-括号决定优先级。
+所以数组作为参数时，函数内部修改会影响原数组。
 
-### 7.4 对象指针
+二维数组参数：
 
 ```cpp
-Point A(5, 10);
-Point *ptr = &A;
-ptr->GetX();      // 等价于 (*ptr).GetX()
+void f(int a[][4], int n)
+{
+}
 ```
 
-### 7.5 指向类成员的指针
+第二维通常必须写，因为编译器要知道如何计算下标地址。
+
+记忆：
+
+```text
+数组名传参 = 传首地址
+二维数组参数要写后面的维度
+```
+
+### 5.2 对象数组
+
+对象数组就是数组元素是对象。
+
+语法：
+
+```cpp
+类名 数组名[大小];
+```
+
+例子：
+
+```cpp
+Clock c[2];
+```
+
+每个元素都是一个 `Clock` 对象。
+
+初始化：
+
+```cpp
+Point p[2] = {Point(1, 2), Point(3, 4)};
+```
+
+如果只给一部分初值：
+
+```cpp
+Point p[2] = {Point(1, 2)};
+```
+
+第一个元素用 `Point(1,2)` 构造，第二个元素调用默认构造函数。
+
+注意：
+
+- 对象数组创建时，每个元素都调用构造函数。
+- 对象数组销毁时，每个元素都调用析构函数。
+
+如果类没有默认构造函数：
+
+```cpp
+class A
+{
+public:
+    A(int x);
+};
+
+A a[10]; // 错，每个元素都需要默认构造，但没有
+```
+
+### 5.3 指针数组和数组指针
+
+指针数组：
+
+```cpp
+int *p[10];
+```
+
+`p` 是数组，数组里每个元素是 `int*`。
+
+数组指针：
+
+```cpp
+int (*p)[3];
+```
+
+`p` 是指针，指向一个含 3 个 `int` 的数组。
+
+怎么区分？
+
+看括号。
+
+```cpp
+int *p[10];   // [] 优先，p 先和 [] 结合，所以 p 是数组
+int (*p)[10]; // p 先和 * 结合，所以 p 是指针
+```
+
+记忆：
+
+```text
+int *p[10]：十个 int 指针
+int (*p)[10]：一个指向十个 int 数组的指针
+```
+
+### 5.4 对象指针
+
+对象指针存放对象地址。
+
+语法：
+
+```cpp
+类名 *指针名;
+```
+
+例子：
+
+```cpp
+Point p(1, 2);
+Point *ptr = &p;
+```
+
+通过指针访问成员：
+
+```cpp
+ptr->getX();
+```
+
+等价于：
+
+```cpp
+(*ptr).getX();
+```
+
+记忆：
+
+```text
+对象.成员
+对象指针->成员
+```
+
+### 5.5 成员指针
+
+成员指针不是普通指针，它指向类中的某个成员。
 
 指向数据成员：
 
 ```cpp
-int Point::*pp = &Point::Z;
-A.*pp;
-p1->*pp;
+int Point::*p = &Point::x;
+```
+
+使用：
+
+```cpp
+Point a;
+a.*p = 10;
+```
+
+如果是对象指针：
+
+```cpp
+Point *pa = &a;
+pa->*p = 20;
 ```
 
 指向成员函数：
 
 ```cpp
-int (Point::*pf)() = &Point::GetX;
-(A.*pf)();
-(p1->*pf)();
+int (Point::*pf)() = &Point::getX;
 ```
 
-这类语法不常用于竞赛，但选择/判断题可能考。
-
-### 7.6 动态内存分配
+调用：
 
 ```cpp
-int *p1 = new int;     // 未初始化
-int *p2 = new int();   // 初始化为 0
-int *p3 = new int(2);  // 初始化为 2
-delete p1;
-delete p2;
-delete p3;
+(a.*pf)();
+(pa->*pf)();
 ```
 
-动态数组：
+这类语法不常写，但选择题可能考。
+
+### 5.6 `new` 和 `delete`
+
+`new` 在堆区申请内存，`delete` 释放内存。
+
+单个变量：
+
+```cpp
+int *p = new int;
+*p = 10;
+delete p;
+```
+
+初始化：
+
+```cpp
+int *p1 = new int;    // 未初始化
+int *p2 = new int();  // 初始化为 0
+int *p3 = new int(5); // 初始化为 5
+```
+
+数组：
 
 ```cpp
 int *a = new int[10];
-int *b = new int[10]();
 delete[] a;
-delete[] b;
 ```
 
-必背配对：
+初始化为 0：
+
+```cpp
+int *a = new int[10]();
+```
+
+配对关系：
 
 | 申请 | 释放 |
 |---|---|
 | `new T` | `delete p` |
 | `new T[n]` | `delete[] p` |
 
-不要：
+错误：
 
-- `delete` 非 `new` 得到的内存。
-- 对同一内存 `delete` 两次。
-- `new[]` 后用 `delete`。
-- `new` 后忘记释放。
+```cpp
+int *p = new int[10];
+delete p; // 错，应该 delete[]
+```
 
-如果 `new` 创建对象，会调用构造函数；`delete` 对象会调用析构函数。
+对象：
 
-### 7.7 `vector`
+```cpp
+Student *s = new Student;
+delete s;
+```
+
+`new` 对象会调用构造函数，`delete` 对象会调用析构函数。
+
+记忆：
+
+```text
+new 和 delete 一对一
+new[] 和 delete[] 一对一
+```
+
+### 5.7 `vector`
+
+`vector` 是标准库中的动态数组类模板。
+
+头文件：
 
 ```cpp
 #include <vector>
-vector<int> arr(n);
-vector<int> brr(n, 1);
-arr.size();
-arr[i];
 ```
 
-留意：
-
-- `vector` 对象名不是数组首地址。
-- `vector` 是封装了动态数组的类模板。
-- `vector` 大小可以运行时决定。
-
-### 7.8 浅复制与深复制
-
-如果类中只有普通变量或对象成员，默认浅复制通常安全。
-
-如果类中有指针成员，默认浅复制会让多个对象共享同一片堆内存，导致：
-
-- 析构时重复释放。
-- 赋值时旧内存泄漏。
-- 修改一个对象影响另一个对象。
-
-深复制核心：重新分配独立堆空间，并复制内容。
+语法：
 
 ```cpp
-ArrayOfPoints::ArrayOfPoints(const ArrayOfPoints &v) {
-    size = v.size;
-    points = new Point[size];
-    for (int i = 0; i < size; i++) {
-        points[i] = v.points[i];
-    }
-}
+vector<元素类型> 名字(大小);
 ```
 
-只要构造函数里用 `new` 初始化指针成员，就要考虑：
+例子：
 
-- 析构函数释放。
-- 复制构造函数深复制。
-- 赋值运算符深复制。
+```cpp
+vector<int> a(10);
+```
 
-### 7.9 `string`
+表示 10 个 `int`，默认初始化为 0。
+
+指定初值：
+
+```cpp
+vector<int> b(10, 1);
+```
+
+10 个元素都为 1。
+
+访问：
+
+```cpp
+a[0] = 5;
+cout << a.size() << endl;
+```
+
+注意：
+
+- `vector` 对象名不是数组首地址。
+- `vector` 是对象，不是普通数组。
+- `size()` 返回元素个数。
+
+算法竞赛里你很熟，但考试会强调它是“类模板”和“封装的动态数组”。
+
+### 5.8 浅复制
+
+浅复制就是逐个复制数据成员。
+
+如果类中只有普通数据成员，浅复制通常没问题：
+
+```cpp
+class A
+{
+    int x;
+    double y;
+};
+```
+
+默认复制构造会复制 `x` 和 `y`。
+
+但如果类中有指针成员：
+
+```cpp
+class Array
+{
+private:
+    int *p;
+    int size;
+};
+```
+
+默认复制只会复制指针值：
+
+```text
+a.p 和 b.p 指向同一片内存
+```
+
+问题：
+
+- 两个对象共享同一内存。
+- 一个对象修改，另一个也受影响。
+- 两个对象析构时可能重复 `delete`。
+
+### 5.9 深复制
+
+深复制就是重新分配一片独立内存，并复制内容。
+
+例子：
+
+```cpp
+class Array
+{
+private:
+    int *p;
+    int size;
+
+public:
+    Array(const Array &a)
+    {
+        size = a.size;
+        p = new int[size];
+        for (int i = 0; i < size; i++)
+        {
+            p[i] = a.p[i];
+        }
+    }
+};
+```
+
+深复制后：
+
+```text
+a.p 指向一片内存
+b.p 指向另一片内存
+内容相同，但空间独立
+```
+
+只要类中有动态分配资源，通常要写：
+
+- 析构函数。
+- 复制构造函数。
+- 赋值运算符。
+
+这就是 Big Three。
+
+### 5.10 `string`
+
+`string` 是 C++ 标准库字符串类。
+
+头文件：
 
 ```cpp
 #include <string>
+```
+
+定义：
+
+```cpp
 string s1;
 string s2("China");
 string s3 = "Wust";
 string s4(s2);
 ```
 
+赋值：
+
+```cpp
+s1 = "hello";
+s2 = s1;
+```
+
+拼接：
+
+```cpp
+string s = s1 + s2;
+s += "!";
+```
+
 输入：
 
 ```cpp
-cin >> s;          // 空格、回车、Tab 结束
-getline(cin, s);   // 读整行
-getline(cin, s, ','); // 读到逗号
+cin >> s; // 遇到空格停止
+```
+
+读整行：
+
+```cpp
+getline(cin, s);
+```
+
+按分隔符读取：
+
+```cpp
+getline(cin, s, ',');
 ```
 
 访问字符：
 
 ```cpp
-s[0] = 'w';
-s.at(0) = 'H';
+s[0] = 'H';
+s.at(1) = 'e';
 ```
 
-## 8. 第 7 章：继承与派生
+`at` 会做越界检查，`[]` 通常不做。
 
-### 8.1 基本概念
+## 6. 继承与派生
 
-继承：在已有类基础上构造新类。
+### 6.1 继承的基本概念
 
-派生：基类生成派生类。
+继承是在已有类基础上定义新类。
+
+语法：
 
 ```cpp
-class Rectangle : public Point {
-public:
-    float GetW() { return W; }
-private:
-    float W, H;
+class 派生类名 : 继承方式 基类名
+{
 };
 ```
 
+例子：
+
+```cpp
+class Person
+{
+public:
+    void eat();
+};
+
+class Student : public Person
+{
+public:
+    void study();
+};
+```
+
+`Student` 继承 `Person`，所以：
+
+```cpp
+Student s;
+s.eat();
+s.study();
+```
+
+继承的目的：
+
+- 代码复用。
+- 扩展已有类。
+- 建立类之间的层次关系。
+
 派生类生成过程：
 
-1. 吸收基类成员，构造函数和析构函数除外。
-2. 改造基类成员，包括访问控制和同名隐藏。
-3. 添加新成员，包括新数据成员、新成员函数、新构造/析构函数。
+```text
+吸收基类成员
+改造基类成员
+添加新成员
+```
 
-### 8.2 三种继承方式
+构造函数和析构函数不会被继承。
 
-| 基类成员 | `public` 继承后 | `protected` 继承后 | `private` 继承后 |
+### 6.2 继承方式
+
+三种继承方式：
+
+```cpp
+class B : public A {};
+class C : protected A {};
+class D : private A {};
+```
+
+继承后访问权限变化：
+
+| 基类成员 | `public` 继承 | `protected` 继承 | `private` 继承 |
 |---|---|---|---|
 | `public` | `public` | `protected` | `private` |
 | `protected` | `protected` | `protected` | `private` |
 | `private` | 不可访问 | 不可访问 | 不可访问 |
 
-口诀：公保公不变，私私保保，私不访。
+口诀：
 
-更直观地说：
-
-- `public` 继承：保留基类接口，是“is-a”关系。
-- `protected` 继承：基类接口变成派生类内部可用，外部对象不可用。
-- `private` 继承：基类接口变成派生类私有实现细节。
-- 基类 `private` 成员无论怎么继承，派生类都不能直接访问。
-
-### 8.3 类型兼容规则
-
-只对公有继承重点掌握。
-
-```cpp
-Base base;
-Derived derived;
-
-base = derived;       // 派生类对象赋给基类对象，会发生切片
-Base &rbase = derived; // 基类引用绑定派生类对象
-Base *pb = &derived;   // 基类指针指向派生类对象
+```text
+公保公不变
+私私保保
+私不访
 ```
 
-替代后只能使用基类部分。若要运行时调用派生类重写函数，需要虚函数。
+解释：
 
-### 8.4 对象切片
+- 公有继承最常见，表示“派生类是基类的一种”。
+- 保护继承和私有继承主要改变外部访问权限。
+- 基类 `private` 成员派生类不能直接访问，只能通过基类 `public/protected` 成员函数间接访问。
+
+### 6.3 类型兼容规则
+
+公有派生类对象可以当作基类对象使用。
+
+例子：
+
+```cpp
+class Base {};
+class Derived : public Base {};
+
+Base b;
+Derived d;
+
+b = d;
+Base &rb = d;
+Base *pb = &d;
+```
+
+三种情况：
+
+1. 派生类对象可以赋值给基类对象。
+2. 基类引用可以绑定派生类对象。
+3. 基类指针可以指向派生类对象。
+
+反过来不行：
+
+```cpp
+Derived *pd = &b; // 错
+```
+
+替代后，只能使用基类部分。
+
+```cpp
+pb->baseFunc(); // 对
+pb->derivedFunc(); // 错，pb 类型是 Base*
+```
+
+类型兼容是虚函数和动态多态的基础。
+
+### 6.4 对象切片
+
+对象切片指用派生类对象初始化或赋值给基类对象时，只保留基类部分。
 
 ```cpp
 Derived d;
 Base b = d;
 ```
 
-此时 `b` 是一个真正的 `Base` 对象，只复制了基类部分。即使有虚函数，`b.display()` 也调用 `Base::display()`，不需要动态绑定。
+此时 `b` 是一个真正的 `Base` 对象，不再和 `d` 的派生类部分有关。
 
-### 8.5 派生类构造与析构顺序
-
-派生类构造函数一般形式：
+即使有虚函数：
 
 ```cpp
-Derived::Derived(args)
-    : Base(baseArgs), member(memberArgs) {
-    // 初始化派生类新增成员
+b.display();
+```
+
+也调用 `Base::display()`，因为 `b` 本身就是基类对象。
+
+记忆：
+
+```text
+指针/引用保留动态类型
+对象赋值会切片
+```
+
+### 6.5 派生类构造函数
+
+派生类构造时，要先构造基类部分。
+
+语法：
+
+```cpp
+Derived::Derived(参数) : Base(基类参数), member(成员参数)
+{
+    // 派生类新增成员初始化
 }
 ```
 
-普通继承构造顺序：
-
-1. 基类构造函数，按继承列表从左到右。
-2. 内嵌对象构造函数，按成员声明顺序。
-3. 派生类构造函数体。
-
-析构顺序完全相反：
-
-1. 派生类析构函数体。
-2. 内嵌对象析构函数。
-3. 基类析构函数。
-
-### 8.6 同名隐藏与作用域分辨符
-
-如果派生类中声明了和基类同名的成员，派生类成员会隐藏基类同名成员。
+例子：
 
 ```cpp
-d.fun();          // 默认找派生类里的 fun
-d.Base::fun();    // 强行调用基类 fun
+class Base
+{
+public:
+    Base(int x);
+};
+
+class Derived : public Base
+{
+private:
+    int y;
+
+public:
+    Derived(int x, int y) : Base(x), y(y)
+    {
+    }
+};
 ```
 
-我会专门留意这些坑：函数同名时，即使参数表不同，派生类函数也会隐藏基类所有同名重载版本。
+构造顺序：
 
-重载与隐藏的区别：
-
-| 项目 | 重载 | 隐藏 |
-|---|---|---|
-| 作用域 | 同一个类/同一作用域 | 基类与派生类不同作用域 |
-| 函数名 | 相同 | 相同 |
-| 参数 | 必须不同 | 可同可不同 |
-| 结果 | 编译器按实参匹配 | 派生类同名成员挡住基类同名成员 |
-
-### 8.7 多继承二义性
-
-```cpp
-class A { public: void f(); };
-class B { public: void f(); };
-class C : public A, public B {};
-
-C c;
-c.f();      // 错，二义性
-c.A::f();   // 对
-c.B::f();   // 对
+```text
+基类构造函数
+成员对象构造函数
+派生类构造函数体
 ```
 
-如果派生类自己定义了同名成员，则会隐藏所有基类同名成员：
+如果有多个基类，按继承列表顺序构造：
 
 ```cpp
-class C : public A, public B {
+class D : public B1, public B2 {};
+```
+
+先 `B1`，再 `B2`。
+
+### 6.6 派生类析构函数
+
+析构顺序和构造相反：
+
+```text
+派生类析构函数体
+成员对象析构函数
+基类析构函数
+```
+
+例子：
+
+```cpp
+class Base
+{
+public:
+    ~Base() { cout << "Base" << endl; }
+};
+
+class Derived : public Base
+{
+public:
+    ~Derived() { cout << "Derived" << endl; }
+};
+```
+
+```cpp
+Derived d;
+```
+
+离开作用域时输出：
+
+```text
+Derived
+Base
+```
+
+记忆：
+
+```text
+构造从上到下
+析构从下到上
+```
+
+### 6.7 同名隐藏
+
+派生类中定义了和基类同名的成员，会隐藏基类同名成员。
+
+例子：
+
+```cpp
+class Base
+{
+public:
+    void f(int);
+};
+
+class Derived : public Base
+{
+public:
+    void f(double);
+};
+```
+
+`Derived::f(double)` 会隐藏 `Base::f(int)`。
+
+调用：
+
+```cpp
+Derived d;
+d.f(3.14); // Derived::f(double)
+d.f(1);    // 仍可能调用 Derived::f(double)，基类 f 被隐藏
+```
+
+如果要调用基类版本：
+
+```cpp
+d.Base::f(1);
+```
+
+重载和隐藏区别：
+
+```text
+重载：同一作用域，函数名相同，参数不同
+隐藏：基类和派生类不同作用域，派生类同名成员挡住基类成员
+```
+
+### 6.8 多继承二义性
+
+多继承时，如果多个基类有同名成员，派生类对象直接访问会二义。
+
+例子：
+
+```cpp
+class A
+{
 public:
     void f();
 };
-c.f(); // 调用 C::f，无二义性
+
+class B
+{
+public:
+    void f();
+};
+
+class C : public A, public B
+{
+};
 ```
 
-### 8.8 `using` 引入基类成员
-
-课件示例：
+调用：
 
 ```cpp
-class D1 : public B1, public B2 {
+C c;
+c.f(); // 错，不知道是 A::f 还是 B::f
+```
+
+解决：
+
+```cpp
+c.A::f();
+c.B::f();
+```
+
+如果派生类自己定义同名函数：
+
+```cpp
+class C : public A, public B
+{
 public:
-    using B1::nV;
+    void f();
+};
+```
+
+那么：
+
+```cpp
+c.f(); // 调 C::f，无二义
+```
+
+### 6.9 `using` 引入基类成员
+
+`using` 可以把基类成员引入派生类作用域。
+
+例子：
+
+```cpp
+class D : public B1, public B2
+{
+public:
     using B1::fun;
-    void fun(int i);
+    using B1::nV;
 };
 ```
 
 作用：
 
-- 指定使用某个基类的同名成员，消除二义性。
-- 引入基类函数名，使派生类中同名不同参函数和基类函数形成类似重载的效果。
+- 指定使用某个基类的同名成员。
+- 让基类函数和派生类同名函数形成类似重载的效果。
 
-### 8.9 虚基类
+例子：
 
-问题场景：菱形继承。
+```cpp
+class B
+{
+public:
+    void fun();
+};
+
+class D : public B
+{
+public:
+    using B::fun;
+    void fun(int);
+};
+```
+
+这样：
+
+```cpp
+D d;
+d.fun();  // B::fun
+d.fun(1); // D::fun(int)
+```
+
+### 6.10 虚基类
+
+虚基类用于解决菱形继承中共同基类被继承多份的问题。
+
+普通菱形继承：
+
+```cpp
+class B0 {};
+class B1 : public B0 {};
+class B2 : public B0 {};
+class D : public B1, public B2 {};
+```
+
+`D` 中有两份 `B0`。
+
+如果访问 `B0` 成员，会二义。
+
+使用虚基类：
 
 ```cpp
 class B0 {};
 class B1 : virtual public B0 {};
 class B2 : virtual public B0 {};
-class D1 : public B1, public B2 {};
+class D : public B1, public B2 {};
 ```
 
-作用：
+现在 `D` 中只有一份 `B0`。
 
-- 解决从共同基类经过多条路径继承导致的多份基类副本问题。
-- 最远派生类中只保留一份虚基类成员。
-- 避免访问共同基类成员时的二义性。
+虚基类构造规则：
 
-关键规则：
+- 虚基类由最远派生类负责初始化。
+- 中间类初始化虚基类的调用会被忽略。
 
-- 在第一级继承共同基类时就要写 `virtual`。
-- 如果虚基类没有默认构造函数，所有直接或间接派生类构造函数初始化列表中通常都要列出虚基类初始化。
-- 建立最远派生类对象时，虚基类由最远派生类构造函数负责初始化，中间类对虚基类构造函数的调用会被忽略。
+构造顺序：
 
-含虚基类的构造顺序：
-
-1. 虚基类构造函数。
-2. 非虚基类构造函数，按继承列表顺序。
-3. 内嵌对象构造函数，按声明顺序。
-4. 派生类构造函数体。
+```text
+虚基类
+非虚基类
+成员对象
+派生类自身
+```
 
 析构顺序反过来。
 
-## 9. 第 8 章：多态与运算符重载
+记忆：
 
-### 9.1 多态分类
+```text
+菱形继承怕多份共同基类
+virtual 让共同基类只保留一份
+```
 
-按使用分类：
+## 7. 多态与运算符重载
 
-- 重载多态：函数重载、运算符重载。
-- 强制多态：强制类型转换。
-- 包含多态：类族中虚函数的动态行为。
-- 参数多态：模板。
+### 7.1 多态
 
-按实现分类：
+多态是同一消息作用于不同对象，产生不同表现。
 
-- 静态多态：编译时绑定，如函数重载、运算符重载、模板。
-- 动态多态：运行时绑定，如虚函数。
+C++ 中常见多态：
 
-### 9.2 运算符重载本质
+- 函数重载。
+- 运算符重载。
+- 虚函数。
+- 模板。
 
-运算符重载本质是函数重载。
+按绑定时间分：
+
+| 类型 | 决定时间 | 例子 |
+|---|---|---|
+| 静态多态 | 编译时 | 函数重载、运算符重载、模板 |
+| 动态多态 | 运行时 | 虚函数 |
+
+记忆：
+
+```text
+重载：编译时决定
+虚函数：运行时决定
+```
+
+### 7.2 运算符重载
+
+运算符重载就是给已有运算符赋予适用于自定义类型的新含义。
+
+语法：
 
 ```cpp
-返回类型 operator 运算符(形参表) {
-    ...
+返回类型 operator 运算符(参数列表)
+{
 }
+```
+
+例子：
+
+```cpp
+class Complex
+{
+private:
+    double real, imag;
+
+public:
+    Complex operator+(Complex c)
+    {
+        return Complex(real + c.real, imag + c.imag);
+    }
+};
+```
+
+调用：
+
+```cpp
+c3 = c1 + c2;
+```
+
+等价于：
+
+```cpp
+c3 = c1.operator+(c2);
 ```
 
 限制：
 
-- 只能重载已有运算符，不能发明新运算符。
+- 不能创造新运算符。
 - 不能改变运算符优先级。
 - 不能改变操作数个数。
-- 至少有一个操作数是自定义类型。
+- 至少一个操作数是自定义类型。
 - 不能重载：`.`、`.*`、`->*`、`::`、`sizeof`、`?:`。
 
-### 9.3 成员函数形式与非成员函数形式
+记忆：
+
+```text
+运算符重载本质是函数重载
+```
+
+### 7.3 成员形式和友元形式
 
 成员函数形式：
 
 ```cpp
-Complex Complex::operator+(Complex c2) {
-    return Complex(real + c2.real, imag + c2.imag);
+Complex Complex::operator+(Complex c)
+{
+    return Complex(real + c.real, imag + c.imag);
 }
 ```
 
 非成员/友元形式：
 
 ```cpp
-friend Complex operator+(Complex c1, Complex c2);
+class Complex
+{
+    friend Complex operator+(Complex a, Complex b);
+};
 
-Complex operator+(Complex c1, Complex c2) {
-    return Complex(c1.real + c2.real, c1.imag + c2.imag);
+Complex operator+(Complex a, Complex b)
+{
+    return Complex(a.real + b.real, a.imag + b.imag);
 }
 ```
 
-参数个数规则：
+区别：
 
-- 成员函数：参数个数 = 原操作数个数 - 1。
-- 非成员函数：参数个数 = 原操作数个数。
-- 后置 `++`、`--` 有一个无实际意义的 `int` 参数，用来区分前置和后置。
+| 形式 | 左操作数 | 参数个数 |
+|---|---|---|
+| 成员函数 | 当前对象 `*this` | 少一个 |
+| 非成员函数 | 普通参数 | 和操作数个数相同 |
 
-### 9.4 哪些必须成员，哪些适合友元
+`<<` 和 `>>` 通常必须写成非成员/友元，因为左操作数是 `ostream` 或 `istream`，不能改标准库类。
 
-| 运算符 | 推荐/限制 |
-|---|---|
-| 一元运算符 | 建议成员函数 |
-| `= () [] ->` | 只能重载为成员函数 |
-| `<< >>` | 通常重载为非成员/友元函数 |
-| `+= -= *= /=` 等复合赋值 | 建议成员函数 |
-| `+ - == <` 等不修改操作数的二元运算符 | 常用友元函数 |
+### 7.4 前置和后置 `++`
 
-### 9.5 前置与后置 `++`
+前置：
 
 ```cpp
-Clock& Clock::operator++() {
-    // 先改自己
+Clock& operator++()
+{
+    // 修改自己
     return *this;
 }
+```
 
-Clock Clock::operator++(int) {
+后置：
+
+```cpp
+Clock operator++(int)
+{
     Clock old = *this;
     ++(*this);
     return old;
 }
 ```
 
-记忆：
+区别：
 
-- 前置：先变后用，通常返回引用。
-- 后置：先用后变，通常返回旧值对象。
-- 后置多一个 `int` 占位参数。
+```cpp
+++a; // 先加，再用
+a++; // 先用，再加
+```
 
-### 9.6 `<<` 和 `>>`
+后置参数中的 `int` 没实际用途，只用来区分前置和后置。
+
+为什么前置返回引用？
+
+因为返回的是修改后的自己。
+
+为什么后置返回对象？
+
+因为要返回修改前的旧值，旧值通常是临时副本。
+
+### 7.5 `<<` 和 `>>` 重载
+
+输出运算符：
 
 ```cpp
 friend ostream& operator<<(ostream &out, const Complex &c);
+```
+
+定义：
+
+```cpp
+ostream& operator<<(ostream &out, const Complex &c)
+{
+    out << "(" << c.real << "," << c.imag << ")";
+    return out;
+}
+```
+
+输入运算符：
+
+```cpp
 friend istream& operator>>(istream &in, Complex &c);
 ```
 
-返回流引用是为了支持链式调用：
+定义：
 
 ```cpp
-cout << a << b;
-cin >> a >> b;
+istream& operator>>(istream &in, Complex &c)
+{
+    in >> c.real >> c.imag;
+    return in;
+}
 ```
 
-`ostream` 不能复制，所以第一个形参必须是引用。
+为什么返回引用？
 
-### 9.7 赋值运算符与 Big Three
-
-默认四个函数：
+为了支持链式调用：
 
 ```cpp
-A();
-A(const A &a);
-~A();
-A& operator=(const A &a);
+cout << c1 << c2;
+cin >> c1 >> c2;
 ```
 
-只要类中有动态分配内存的指针成员，就要写 Big Three：
+为什么第一个参数是引用？
 
-1. 析构函数。
-2. 复制构造函数。
-3. 赋值运算符。
+`ostream` 和 `istream` 不能复制，只能引用传递。
 
-赋值运算符模板：
+为什么输出第二个参数常写 `const`？
+
+因为输出不应该修改对象。
+
+为什么输入第二个参数不能是 `const`？
+
+因为输入要修改对象。
+
+### 7.6 赋值运算符 `operator=`
+
+赋值运算符用于已有对象之间赋值。
+
+语法：
 
 ```cpp
-String& String::operator=(const String &rhs) {
-    if (this != &rhs) {
+类名& operator=(const 类名 &rhs);
+```
+
+例子：
+
+```cpp
+String& String::operator=(const String &rhs)
+{
+    if (this != &rhs)
+    {
         delete[] s;
         s = new char[strlen(rhs.s) + 1];
         strcpy(s, rhs.s);
@@ -1458,302 +3531,601 @@ String& String::operator=(const String &rhs) {
 四步：
 
 1. 检查自赋值。
-2. 释放原有资源。
-3. 分配新资源并复制内容。
+2. 释放旧资源。
+3. 分配新资源并复制。
 4. 返回 `*this`。
 
-### 9.8 复制构造 vs 赋值运算符
+为什么返回引用？
+
+支持链式赋值：
 
 ```cpp
-Myclass a("hello");
-Myclass b("world");
-
-Myclass c = a; // 复制构造，等价于 Myclass c(a)
-c = b;         // 赋值运算符
+a = b = c;
 ```
 
-判断关键：
+为什么参数是 `const 引用`？
 
-- 新对象创建时用已有对象初始化：复制构造。
-- 两个对象都已存在，再赋值：赋值运算符。
+- 避免复制。
+- 允许右侧是常对象或临时对象。
+- 保证不修改右侧对象。
 
-### 9.9 `operator+`、`operator+=`、`operator[]` 返回值
+### 7.7 Big Three
 
-`operator+`：
+如果类中有动态资源，通常要写三个函数：
 
-```cpp
-String String::operator+(const String &rhs);
+```text
+析构函数
+复制构造函数
+赋值运算符
 ```
 
-返回新对象，不要返回局部对象引用。`a + b = c` 这种表达式不合理，所以返回值对象即可。
-
-`operator+=`：
+例子：
 
 ```cpp
-String& String::operator+=(const String &rhs) {
+class String
+{
+private:
+    char *s;
+
+public:
+    String(const char *str);
+    String(const String &rhs);
+    String& operator=(const String &rhs);
+    ~String();
+};
+```
+
+为什么？
+
+默认复制构造和默认赋值都是浅复制。指针成员会导致多个对象指向同一片内存。
+
+如果只写析构不写复制构造，复制对象后两个对象析构会重复释放。
+
+记忆：
+
+```text
+有 new，就想 Big Three
+```
+
+### 7.8 复制构造和赋值的区别
+
+复制构造：
+
+```cpp
+String a("hello");
+String b = a;
+String c(a);
+```
+
+此时 `b`、`c` 是新对象。
+
+赋值：
+
+```cpp
+String a("hello");
+String b("world");
+b = a;
+```
+
+此时 `b` 已经存在。
+
+判断口诀：
+
+```text
+新对象诞生：复制构造
+老对象改值：赋值运算符
+```
+
+### 7.9 `operator+`、`operator+=`、`operator[]`
+
+`operator+` 返回新对象：
+
+```cpp
+String String::operator+(const String &rhs)
+{
+    ...
+    return ans;
+}
+```
+
+不能返回局部对象引用。
+
+`operator+=` 修改自己：
+
+```cpp
+String& String::operator+=(const String &rhs)
+{
     ...
     return *this;
 }
 ```
 
-返回引用，用于链式调用：
+返回引用支持：
 
 ```cpp
-str1 += str2 += str3;
+s1 += s2 += s3;
 ```
 
-`operator[]`：
+`operator[]` 要返回引用：
 
 ```cpp
-char& String::operator[](int n) {
-    return s[n];
+char& String::operator[](int i)
+{
+    return s[i];
 }
 ```
 
-必须返回引用，才能作为左值：
+这样才能：
 
 ```cpp
-s[0] = 'g';
+s[0] = 'A';
 ```
 
-### 9.10 虚函数
+如果返回 `char`，就是返回副本，不能作为左值修改。
 
-声明：
+### 7.10 虚函数
+
+虚函数用关键字 `virtual`。
+
+语法：
 
 ```cpp
-class B0 {
+class Base
+{
 public:
     virtual void display();
 };
 ```
 
-规则：
-
-- 虚函数是动态绑定的基础。
-- 必须是非静态成员函数。
-- `virtual` 只写在类内声明处，类外定义不再写。
-- 基类函数声明为虚函数后，派生类同原型函数自动成为虚函数。
-- 通过基类指针或引用调用虚函数时，根据实际对象类型决定调用哪个版本。
-
-动态多态三个条件：
-
-1. 类之间满足类型兼容规则，通常是公有继承。
-2. 基类中有虚函数。
-3. 通过基类指针或引用调用虚函数。
-
-例：
+派生类重写：
 
 ```cpp
-void fun2(B0 *ptr) {
-    ptr->display();
-}
-
-B1 b1;
-D1 d1;
-fun2(&b1); // 调 B1::display
-fun2(&d1); // 调 D1::display
-```
-
-### 9.11 虚析构函数
-
-```cpp
-class Base {
+class Derived : public Base
+{
 public:
-    virtual ~Base() {}
+    void display();
 };
 ```
 
-如果可能通过基类指针删除派生类对象，基类析构函数必须是虚函数：
+动态绑定：
+
+```cpp
+Base *p;
+Derived d;
+p = &d;
+p->display(); // 调 Derived::display
+```
+
+条件：
+
+1. 公有继承，满足类型兼容。
+2. 基类中函数声明为 `virtual`。
+3. 通过基类指针或引用调用。
+
+如果直接对象调用：
+
+```cpp
+Base b = d;
+b.display();
+```
+
+发生对象切片，调用 `Base::display()`。
+
+注意：
+
+- `virtual` 写在类内声明处。
+- 类外定义时不写 `virtual`。
+- 静态成员函数不能是虚函数。
+- 构造函数不能是虚函数。
+
+记忆：
+
+```text
+虚函数：基类指针/引用看实际对象类型
+```
+
+### 7.11 虚析构函数
+
+如果可能通过基类指针删除派生类对象，基类析构函数要写成虚析构。
+
+例子：
+
+```cpp
+class Base
+{
+public:
+    virtual ~Base()
+    {
+    }
+};
+
+class Derived : public Base
+{
+public:
+    ~Derived()
+    {
+    }
+};
+```
+
+使用：
 
 ```cpp
 Base *p = new Derived;
-delete p; // 需要 virtual ~Base()
+delete p;
 ```
 
-否则派生类析构函数可能不被正确调用。
-
-留意：
-
-- 构造函数不能是虚函数。
-- 析构函数可以是虚函数。
-- 基类析构函数是虚函数后，派生类析构函数也自动具有虚函数性质。
-
-### 9.12 纯虚函数与抽象类
-
-```cpp
-class Convert {
-public:
-    virtual void compute() = 0;
-};
-```
-
-含有纯虚函数的类是抽象类。
+如果基类析构不是虚函数，`delete p` 可能只调用 `Base` 析构，不调用 `Derived` 析构，造成资源泄漏。
 
 规则：
 
-- 抽象类不能实例化对象。
-- 可以声明抽象类指针和引用。
-- 抽象类通常作为基类，统一接口。
-- 派生类若没有实现所有纯虚函数，仍是抽象类。
+- 构造函数不能虚。
+- 析构函数可以虚。
+- 如果一个类打算作为多态基类，析构函数通常应为 `virtual`。
 
-纯虚析构函数必须提供函数体：
+### 7.12 纯虚函数和抽象类
+
+纯虚函数语法：
 
 ```cpp
-class A {
+virtual 返回类型 函数名(参数列表) = 0;
+```
+
+例子：
+
+```cpp
+class Shape
+{
+public:
+    virtual double area() = 0;
+};
+```
+
+含有纯虚函数的类叫抽象类。
+
+抽象类不能创建对象：
+
+```cpp
+Shape s; // 错
+```
+
+但可以定义指针或引用：
+
+```cpp
+Shape *p;
+Shape &r = circle;
+```
+
+派生类必须实现纯虚函数，否则仍然是抽象类：
+
+```cpp
+class Circle : public Shape
+{
+private:
+    double r;
+
+public:
+    double area()
+    {
+        return 3.14 * r * r;
+    }
+};
+```
+
+纯虚析构函数必须有函数体：
+
+```cpp
+class A
+{
 public:
     virtual ~A() = 0;
 };
 
-A::~A() {}
-```
-
-纯虚函数和空虚函数区别：
-
-| 类型 | 函数体 | 类是否抽象 | 能否实例化 |
-|---|---|---|---|
-| 纯虚函数 | 通常没有函数体 | 是 | 否 |
-| 空虚函数 | 有空函数体 | 否 | 可以 |
-
-## 10. 第 9 章：模板和群体数据
-
-### 10.1 函数模板
-
-```cpp
-template <typename T>
-T abs(T x) {
-    return x < 0 ? -x : x;
+A::~A()
+{
 }
 ```
 
-或：
+记忆：
 
-```cpp
-template <class T>
+```text
+= 0 表示纯虚
+有纯虚函数就是抽象类
+抽象类不能实例化，但可以有指针和引用
 ```
 
-`typename` 和 `class` 在模板参数中多数情况下等价。
+## 8. 模板和群体数据
 
-模板实例化：
+### 8.1 函数模板
 
-- 模板本身不生成目标代码。
-- 只有使用具体类型调用时，编译器才按模板生成具体函数。
+函数模板让一个函数适用于多种类型。
 
-函数模板定义通常放在头文件里，不能像普通函数那样只把声明放头文件、定义放 `.cpp`。
-
-### 10.2 函数模板重载与显式指定类型
+语法：
 
 ```cpp
-template <typename T1, typename T2>
-T1 min(const T1 &a, const T2 &b) {
-    return (a < b) ? a : b;
+template <typename T>
+返回类型 函数名(参数列表)
+{
+}
+```
+
+例子：
+
+```cpp
+template <typename T>
+T myAbs(T x)
+{
+    return x < 0 ? -x : x;
 }
 ```
 
 调用：
 
 ```cpp
-min<int, double>(3, 5.0); // 返回 int
-min<int>(3, 5.0);         // 返回 int
-min<double>(3, 5.0);      // 返回 double
-min(3.0, 5);              // 推断 T1=double, T2=int
+cout << myAbs(-5) << endl;     // T 是 int
+cout << myAbs(-3.14) << endl;  // T 是 double
 ```
 
-如果同时有普通函数和模板函数，编译器会按匹配程度选择，普通函数可能优先。
-
-### 10.3 类模板
+`typename` 也可以写成 `class`：
 
 ```cpp
 template <class T>
-class Store {
+```
+
+函数模板本身不生成代码，只有被具体类型使用时才实例化。
+
+注意：
+
+模板定义通常放在头文件中。不能像普通函数那样只把声明放头文件、定义放 `.cpp`，否则其他文件实例化时看不到函数体。
+
+记忆：
+
+```text
+模板 = 类型参数化
+用到具体类型时才生成具体函数
+```
+
+### 8.2 多模板参数
+
+模板可以有多个类型参数。
+
+例子：
+
+```cpp
+template <typename T1, typename T2>
+T1 myMin(const T1 &a, const T2 &b)
+{
+    return a < b ? a : b;
+}
+```
+
+调用：
+
+```cpp
+myMin<int, double>(3, 5.0);
+myMin<int>(3, 5.0);
+myMin<double>(3, 5.0);
+```
+
+返回类型由 `T1` 决定。
+
+考试要会判断模板参数推断结果。
+
+### 8.3 类模板
+
+类模板让类中的数据成员或成员函数参数类型可变。
+
+语法：
+
+```cpp
+template <class T>
+class Store
+{
 private:
     T item;
-    int haveValue;
+
 public:
-    Store();
-    T GetElem();
     void PutElem(T x);
+    T GetElem();
 };
 ```
 
-类外定义成员函数：
+类外定义：
 
 ```cpp
 template <class T>
-Store<T>::Store() : haveValue(0) {}
+void Store<T>::PutElem(T x)
+{
+    item = x;
+}
 
 template <class T>
-T Store<T>::GetElem() {
+T Store<T>::GetElem()
+{
     return item;
 }
 ```
 
-留意：
+使用：
 
-- 写类名时要带模板参数：`Store<T>::GetElem`。
-- 使用时要指定类型：`Store<int> s;`。
+```cpp
+Store<int> s1;
+Store<double> s2;
+Store<Student> s3;
+```
 
-### 10.4 动态数组类模板
+注意：
 
-课件的 `array.h` 是核心样例。
+- 类名在类外定义时写 `Store<T>`。
+- 创建对象时要写具体类型，如 `Store<int>`。
 
-重点结构：
+### 8.4 动态数组类模板
+
+动态数组类模板的核心是：用一个指针管理堆上数组。
+
+基本结构：
 
 ```cpp
 template <class T>
-class Array {
+class Array
+{
 private:
     T *list;
     int size;
+
 public:
     Array(int sz = 50);
     Array(const Array<T> &a);
     ~Array();
     Array<T>& operator=(const Array<T> &rhs);
     T& operator[](int i);
-    const T& operator[](int i) const;
-    operator T*();
     int getSize() const;
     void resize(int sz);
 };
 ```
 
-必会：
-
-- 构造函数里 `list = new T[size];`
-- 析构函数里 `delete[] list;`
-- 复制构造要深复制。
-- 赋值运算符要防自赋值。
-- `operator[]` 返回 `T&`，这样 `a[i] = value;` 才能成立。
-- `const` 版本返回 `const T&`。
-- `resize` 申请新空间、复制较小长度、释放旧空间、更新指针和大小。
-
-### 10.5 类型转换函数
+构造：
 
 ```cpp
-Array<T>::operator T*() {
+template <class T>
+Array<T>::Array(int sz)
+{
+    size = sz;
+    list = new T[size];
+}
+```
+
+析构：
+
+```cpp
+template <class T>
+Array<T>::~Array()
+{
+    delete[] list;
+}
+```
+
+复制构造：
+
+```cpp
+template <class T>
+Array<T>::Array(const Array<T> &a)
+{
+    size = a.size;
+    list = new T[size];
+    for (int i = 0; i < size; i++)
+    {
+        list[i] = a.list[i];
+    }
+}
+```
+
+赋值：
+
+```cpp
+template <class T>
+Array<T>& Array<T>::operator=(const Array<T> &rhs)
+{
+    if (this != &rhs)
+    {
+        delete[] list;
+        size = rhs.size;
+        list = new T[size];
+        for (int i = 0; i < size; i++)
+        {
+            list[i] = rhs.list[i];
+        }
+    }
+    return *this;
+}
+```
+
+下标运算符：
+
+```cpp
+template <class T>
+T& Array<T>::operator[](int i)
+{
+    return list[i];
+}
+```
+
+为什么返回 `T&`？
+
+因为要支持：
+
+```cpp
+a[3] = 10;
+```
+
+如果返回 `T`，只是返回副本，不能修改数组元素。
+
+### 8.5 类型转换函数
+
+类型转换函数可以把类对象转换成某种类型。
+
+语法：
+
+```cpp
+operator 类型()
+{
+    return 某个该类型的值;
+}
+```
+
+例子：
+
+```cpp
+template <class T>
+Array<T>::operator T*()
+{
     return list;
 }
 ```
 
-作用：让 `Array<int>` 对象在需要 `int*` 的地方能转换成内部数组首地址。
+作用：
 
-留意：
+让 `Array<int>` 对象在需要 `int*` 的地方自动转换为内部数组首地址。
+
+注意：
 
 - 类型转换函数不写返回类型。
-- 函数名就是 `operator 目标类型`。
+- 函数名里已经包含目标类型。
 
-### 10.6 链表结点
+错误：
+
+```cpp
+T* operator T*(); // 错
+```
+
+正确：
+
+```cpp
+operator T*();
+```
+
+### 8.6 链表结点
+
+链表由结点组成。
+
+结点通常包含：
+
+- 数据域。
+- 指针域。
+
+模板结点类：
 
 ```cpp
 template <class T>
-class Node {
+class Node
+{
 private:
     Node<T> *next;
+
 public:
     T data;
     void InsertAfter(Node<T> *p);
     Node<T>* DeleteAfter();
-    Node<T>* NextNode() const;
 };
 ```
 
@@ -1761,7 +4133,8 @@ public:
 
 ```cpp
 template <class T>
-void Node<T>::InsertAfter(Node<T> *p) {
+void Node<T>::InsertAfter(Node<T> *p)
+{
     p->next = next;
     next = p;
 }
@@ -1771,325 +4144,619 @@ void Node<T>::InsertAfter(Node<T> *p) {
 
 ```cpp
 template <class T>
-Node<T>* Node<T>::DeleteAfter() {
-    Node<T> *tempPtr = next;
-    if (next == NULL) return NULL;
-    next = tempPtr->next;
-    return tempPtr;
+Node<T>* Node<T>::DeleteAfter()
+{
+    Node<T> *temp = next;
+    if (next == NULL)
+    {
+        return NULL;
+    }
+    next = temp->next;
+    return temp;
 }
 ```
 
-### 10.7 栈与队列
+这里返回被删除结点指针，调用者可以继续处理或释放它。
 
-栈：后进先出。
+### 8.7 栈
+
+栈是只能从一端访问的线性结构。
+
+特点：
+
+```text
+后进先出 LIFO
+```
 
 基本操作：
 
-- `push`
-- `pop`
-- `peek`
-- `clear`
-- `isEmpty`
-- `isFull`
+- `push` 入栈。
+- `pop` 出栈。
+- `peek` 看栈顶。
+- `isEmpty` 判空。
+- `isFull` 判满。
 
-队列：一端入队，另一端出队。
+数组实现时可用 `top` 表示栈顶位置。
 
-循环队列关键：
+```cpp
+template <class T, int SIZE = 50>
+class Stack
+{
+private:
+    T list[SIZE];
+    int top;
+};
+```
+
+### 8.8 队列
+
+队列是一端入队、一端出队的线性结构。
+
+特点：
+
+```text
+先进先出 FIFO
+```
+
+基本操作：
+
+- 入队。
+- 出队。
+- 访问队首。
+- 判空。
+- 判满。
+
+循环队列核心：
 
 ```cpp
 front = (front + 1) % SIZE;
 rear = (rear + 1) % SIZE;
 ```
 
-## 11. 第 10 章：STL
+为什么取余？
 
-STL 四大组件：
+因为数组末尾之后要回到数组开头。
+
+## 9. STL
+
+### 9.1 STL 四大组件
+
+STL 是标准模板库。
+
+四大组件：
 
 | 组件 | 含义 |
 |---|---|
-| 容器 | 存储一组元素的对象 |
-| 迭代器 | 泛化指针，连接容器和算法 |
-| 算法 | 函数模板，如查找、排序、变换 |
-| 函数对象 | 重载 `operator()` 的对象 |
+| 容器 | 存数据 |
+| 迭代器 | 像指针一样访问容器 |
+| 算法 | 通用函数模板 |
+| 函数对象 | 像函数一样使用的对象 |
 
-常见容器：
-
-- 顺序容器：`vector`、`deque`、`list`。
-- 关联容器：`set`、`multiset`、`map`、`multimap`。
-
-示例：
+例子：
 
 ```cpp
 #include <vector>
-#include <iterator>
 #include <algorithm>
-#include <functional>
 
-vector<int> s(N);
-transform(s.begin(), s.end(),
-          ostream_iterator<int>(cout, " "),
-          negate<int>());
+vector<int> a = {3, 1, 2};
+sort(a.begin(), a.end());
 ```
 
-理解重点：
+`a` 是容器，`a.begin()` 和 `a.end()` 是迭代器，`sort` 是算法。
 
-- 算法不直接依赖容器类型，而是通过迭代器访问。
-- 函数对象作为算法参数，决定具体操作。
+### 9.2 容器
 
-## 12. 第 11 章：流类库与输入输出
+容器用于保存一组元素。
 
-### 12.1 常用头文件和对象
+顺序容器：
 
-| 头文件 | 内容 |
-|---|---|
-| `<iostream>` | `cin`、`cout`、`cerr`、`clog` |
-| `<iomanip>` | `setw`、`setprecision` 等格式控制 |
-| `<fstream>` | 文件输入输出 |
-| `<sstream>` | 字符串流 |
+- `vector`
+- `deque`
+- `list`
+
+关联容器：
+
+- `set`
+- `multiset`
+- `map`
+- `multimap`
+
+算法竞赛里最常用：
+
+```cpp
+vector<int> v;
+set<int> s;
+map<string, int> mp;
+```
+
+课程考试重点是知道它们都是 STL 容器，使用时要包含对应头文件。
+
+### 9.3 迭代器
+
+迭代器是泛化的指针。
+
+例子：
+
+```cpp
+vector<int> v = {1, 2, 3};
+
+for (vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+{
+    cout << *it << endl;
+}
+```
+
+现代写法：
+
+```cpp
+for (auto it = v.begin(); it != v.end(); ++it)
+{
+    cout << *it << endl;
+}
+```
+
+迭代器作用：
+
+```text
+把容器和算法连接起来
+```
+
+算法不需要知道具体容器内部怎么存，只通过迭代器访问。
+
+### 9.4 算法和函数对象
+
+算法是函数模板。
+
+例子：
+
+```cpp
+sort(v.begin(), v.end());
+```
+
+函数对象是重载了 `operator()` 的对象。
+
+例子：
+
+```cpp
+struct Greater
+{
+    bool operator()(int a, int b)
+    {
+        return a > b;
+    }
+};
+
+sort(v.begin(), v.end(), Greater());
+```
+
+标准库也有函数对象：
+
+```cpp
+#include <functional>
+greater<int>()
+less<int>()
+negate<int>()
+```
+
+## 10. 流类库与输入输出
+
+### 10.1 常用流对象
+
+头文件：
+
+```cpp
+#include <iostream>
+```
 
 对象：
 
-- `cin`：标准输入。
-- `cout`：标准输出，缓冲。
-- `cerr`：标准错误，非缓冲，立即输出。
-- `clog`：标准错误，缓冲。
+| 对象 | 含义 |
+|---|---|
+| `cin` | 标准输入 |
+| `cout` | 标准输出 |
+| `cerr` | 标准错误，非缓冲 |
+| `clog` | 标准错误，缓冲 |
 
-### 12.2 输出格式
+`cerr` 常用于立即输出错误信息。
 
-```cpp
-cout.width(10);
-cout.fill('*');
-cout << value << '\n';
-```
+`clog` 也是错误输出，但有缓冲。
 
-或：
+### 10.2 文件输出
 
-```cpp
-cout << setw(10) << value << endl;
-cout << setprecision(1) << value << endl;
-cout << setiosflags(ios_base::scientific);
-```
-
-`width` 和 `setw` 只影响下一个输出项。
-
-### 12.3 文件输出六步
+头文件：
 
 ```cpp
 #include <fstream>
+```
 
-ofstream myFile;
-myFile.open("test.txt", ios_base::out);
-if (!myFile) {
-    cout << "Error opening the file!" << endl;
-    exit(-1);
+输出文件流：
+
+```cpp
+ofstream fout;
+fout.open("out.txt");
+```
+
+完整步骤：
+
+```cpp
+#include <fstream>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    ofstream fout("out.txt");
+    if (!fout)
+    {
+        cout << "Error opening file" << endl;
+        return -1;
+    }
+
+    fout << "hello" << endl;
+    fout.close();
+    return 0;
 }
-myFile << "Hello world";
-myFile.put('A');
-myFile.close();
 ```
 
-三种打开方式：
+六步：
+
+```text
+包含头文件
+定义文件流对象
+打开文件
+检查是否成功
+读写数据
+关闭文件
+```
+
+### 10.3 文件输入
+
+输入文件流：
 
 ```cpp
-ofstream f1;
-f1.open("filename");
-
-ofstream f2("filename");
-
-ofstream *pf = new ofstream;
-pf->open("filename");
+ifstream fin("in.txt");
 ```
 
-### 12.4 文件输入
+读取：
 
 ```cpp
-ifstream infile("outputtestfile.txt");
-string str;
-getline(infile, str);
-cout << str << endl;
-infile.close();
+string s;
+getline(fin, s);
 ```
 
-### 12.5 字符串流
+完整例子：
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+    ifstream fin("in.txt");
+    if (!fin)
+    {
+        cout << "open failed" << endl;
+        return -1;
+    }
+
+    string line;
+    while (getline(fin, line))
+    {
+        cout << line << endl;
+    }
+
+    fin.close();
+}
+```
+
+### 10.4 字符串流
+
+字符串流把字符串当成输入输出流。
+
+头文件：
 
 ```cpp
 #include <sstream>
+```
 
-istringstream istr("1 56.7");
+例子：
+
+```cpp
+istringstream iss("1 56.7");
 int a;
-float b;
-istr >> a >> b;
+double b;
+iss >> a >> b;
 ```
 
-## 13. 第 12 章：异常处理
-
-### 13.1 基本思想
-
-异常处理让“发现异常”和“处理异常”可以分离：
-
-- 底层函数负责发现错误并 `throw`。
-- 上层调用者在合适位置 `try/catch`。
-
-### 13.2 三段式
+输出：
 
 ```cpp
-try {
-    // 正常执行代码
-    if (bad) throw value;
-}
-catch (Type e) {
-    // 处理 Type 类型异常
-}
-catch (...) {
-    // 处理其他所有异常
-}
+ostringstream oss;
+oss << "a = " << 10;
+string s = oss.str();
 ```
 
-规则：
+作用：
 
-- `throw 表达式;` 抛出异常。
-- 抛出后立即停止执行当前 `try` 块剩余语句。
-- 程序依次查找第一个类型匹配的 `catch`。
-- 找不到匹配时调用 `terminate`，通常导致程序终止。
-- `catch(...)` 必须放在所有具体 `catch` 之后。
+- 从字符串中解析数字。
+- 把多个值拼成字符串。
 
-### 13.3 多个异常
+## 11. 异常处理
+
+### 11.1 异常处理思想
+
+异常处理用于处理程序运行中的意外情况。
+
+比如：
+
+- 文件打开失败。
+- 内存申请失败。
+- 参数非法。
+- 除数为 0。
+
+异常处理让发现错误和处理错误分离。
+
+底层函数：
 
 ```cpp
-try {
-    ...
+throw 异常;
+```
+
+上层代码：
+
+```cpp
+try
+{
 }
-catch (int e) {
-    ...
-}
-catch (const char *s) {
-    ...
-}
-catch (...) {
-    ...
+catch (...)
+{
 }
 ```
 
-每次执行一个 `try` 块，最多抛出一个异常，但不同执行路径可抛不同类型。
+### 11.2 `try-throw-catch`
 
-### 13.4 栈解旋
+基本结构：
 
-抛出异常后，找到匹配 `catch` 前，会自动析构从 `try` 块开始到异常抛出点之间已经构造、尚未析构的自动对象。析构顺序与构造顺序相反。
+```cpp
+try
+{
+    // 可能出错的代码
+    throw 表达式;
+}
+catch (异常类型 变量名)
+{
+    // 处理异常
+}
+```
 
-如果 `catch` 参数是值，会复制异常对象；如果是引用，会引用异常对象。
+例子：
 
-### 13.5 异常接口声明
+```cpp
+try
+{
+    int milk = 0;
+    int biscuits = 10;
+    if (milk <= 0)
+    {
+        throw biscuits;
+    }
+}
+catch (int e)
+{
+    cout << e << " biscuits, and no milk" << endl;
+}
+```
 
-课件使用旧式异常规格：
+执行过程：
+
+```text
+进入 try
+遇到 throw
+停止 try 中后续语句
+寻找匹配 catch
+执行 catch
+继续 catch 后面的代码
+```
+
+如果没有异常，`catch` 会被跳过。
+
+### 11.3 多个 `catch`
+
+一个 `try` 后可以接多个 `catch`。
+
+```cpp
+try
+{
+    ...
+}
+catch (int e)
+{
+}
+catch (const char *s)
+{
+}
+catch (...)
+{
+}
+```
+
+`catch(...)` 可以捕获任意异常，但必须放最后。
+
+原因：
+
+如果放前面，它会把所有异常都拦住，后面的具体 `catch` 永远用不到。
+
+### 11.4 栈解旋
+
+抛出异常后，程序会离开当前作用域。
+
+离开过程中，已经构造好的局部对象会自动析构。
+
+这个过程叫栈解旋。
+
+例子：
+
+```cpp
+class A
+{
+public:
+    ~A()
+    {
+        cout << "~A" << endl;
+    }
+};
+
+void f()
+{
+    A a;
+    throw 1;
+}
+```
+
+当 `throw 1` 发生时，`a` 会被析构。
+
+这也是异常机制重要价值之一：不会因为跳转而忘记析构局部对象。
+
+### 11.5 异常接口声明
+
+课件里提到旧式异常规格：
 
 ```cpp
 void fun() throw(A, B, C);
 void fun() throw();
 ```
 
-按课件记：
+按课件理解：
 
-- `throw(A, B, C)` 表示函数只允许抛出这些类型及其子类型。
-- `throw()` 表示不抛任何异常。
-- 现代 C++ 已不推荐这种写法，但考试若按课件问，要按课件规则答。
+- `throw(A, B, C)` 表示函数只应该抛这些类型。
+- `throw()` 表示函数不抛异常。
 
-## 14. 程序阅读题解题套路
+现代 C++ 中这种写法已经不推荐，但考试如果按课件问，要按课件规则答。
 
-遇到“写输出结果”的题，按这个顺序标记。
+## 12. 程序阅读题套路
 
-### 14.1 对象生命周期题
+### 12.1 构造析构输出顺序
 
-1. 先找所有对象定义，按作用域标出创建顺序。
-2. 判断调用哪个构造函数：默认、有参、复制。
-3. 若有类组合，先构造成员对象，再执行本类构造函数体。
-4. 若有继承，先构造基类，再构造成员对象，最后派生类本体。
-5. 若有虚基类，虚基类最先，由最远派生类初始化。
-6. 离开作用域时析构，顺序与构造反过来。
+看到程序输出构造析构，按顺序画：
 
-### 14.2 复制构造与赋值
-
-看到：
-
-```cpp
-A b = a;
-A b(a);
-fun(a);       // fun(A x)
-return a;     // 返回 A
+```text
+基类
+成员对象
+本类
 ```
 
-考虑复制构造。
+析构反过来：
 
-看到：
-
-```cpp
-b = a;
+```text
+本类
+成员对象
+基类
 ```
 
-如果 `b` 已存在，考虑赋值运算符。
+含虚基类：
 
-### 14.3 运算符重载题
+```text
+虚基类
+非虚基类
+成员对象
+本类
+```
 
-把表达式翻译成函数调用：
+### 12.2 复制构造还是赋值
+
+看对象是否正在创建。
 
 ```cpp
-c1 + c2    // c1.operator+(c2) 或 operator+(c1, c2)
-++a        // a.operator++()
-a++        // a.operator++(0)
-cout << a  // operator<<(cout, a)
-a[i]       // a.operator[](i)
+A b = a; // 复制构造
+A b(a);  // 复制构造
+b = a;   // 赋值，前提是 b 已存在
+```
+
+函数值传参：
+
+```cpp
+void f(A x);
+f(a); // 复制构造
+```
+
+引用传参：
+
+```cpp
+void f(const A &x);
+f(a); // 不复制
+```
+
+### 12.3 虚函数调用
+
+三问：
+
+1. 基类函数有没有 `virtual`？
+2. 是不是通过基类指针或引用调用？
+3. 指针或引用实际指向哪个对象？
+
+如果是对象切片：
+
+```cpp
+Base b = derived;
+b.f();
+```
+
+那 `b` 已经是 `Base` 对象。
+
+### 12.4 运算符重载翻译
+
+把表达式翻译成函数调用。
+
+```cpp
+a + b       -> a.operator+(b) 或 operator+(a, b)
+++a         -> a.operator++()
+a++         -> a.operator++(0)
+cout << a   -> operator<<(cout, a)
+a[i]        -> a.operator[](i)
 ```
 
 再看返回值是对象还是引用。
 
-### 14.4 虚函数题
+## 13. 程序填空模板
 
-判断步骤：
-
-1. 基类函数是否有 `virtual`。
-2. 调用表达式是否通过基类指针或引用。
-3. 指针或引用实际绑定的是哪个派生类对象。
-4. 如果发生对象切片，如 `Base b = d;`，那 `b` 已经是基类对象。
-
-### 14.5 继承访问控制题
-
-先判断成员原始权限，再看继承方式。
-
-- 基类 `private`：派生类不能直接访问。
-- 派生类对象只能访问最终为 `public` 的成员。
-- `protected` 对派生类内部可见，对对象不可见。
-
-## 15. 程序填空常用模板
-
-### 15.1 指针成员类的 Big Three
+### 13.1 `String` 类 Big Three
 
 ```cpp
-#include <cstring>
-
-class String {
+class String
+{
 private:
     char *s;
+
 public:
-    String() {
+    String()
+    {
         s = new char[1];
         s[0] = '\0';
     }
 
-    String(const char *a) {
-        s = new char[strlen(a) + 1];
-        strcpy(s, a);
+    String(const char *str)
+    {
+        s = new char[strlen(str) + 1];
+        strcpy(s, str);
     }
 
-    String(const String &t) {
-        s = new char[strlen(t.s) + 1];
-        strcpy(s, t.s);
+    String(const String &rhs)
+    {
+        s = new char[strlen(rhs.s) + 1];
+        strcpy(s, rhs.s);
     }
 
-    ~String() {
+    ~String()
+    {
         delete[] s;
     }
 
-    String& operator=(const String &rhs) {
-        if (this != &rhs) {
+    String& operator=(const String &rhs)
+    {
+        if (this != &rhs)
+        {
             delete[] s;
             s = new char[strlen(rhs.s) + 1];
             strcpy(s, rhs.s);
@@ -2099,242 +4766,108 @@ public:
 };
 ```
 
-### 15.2 `operator+`
+### 13.2 `operator+`
 
 ```cpp
-String String::operator+(const String &t2) {
-    char *st = new char[strlen(s) + strlen(t2.s) + 1];
-    strcpy(st, s);
-    strcat(st, t2.s);
-    String ans(st);
-    delete[] st;
+String String::operator+(const String &rhs)
+{
+    char *tmp = new char[strlen(s) + strlen(rhs.s) + 1];
+    strcpy(tmp, s);
+    strcat(tmp, rhs.s);
+    String ans(tmp);
+    delete[] tmp;
     return ans;
 }
 ```
 
-返回值不能是局部对象引用。
+返回对象，不返回引用。
 
-### 15.3 `operator+=`
+### 13.3 `operator+=`
 
 ```cpp
-String& String::operator+=(const String &rhs) {
-    char *st = new char[strlen(s) + strlen(rhs.s) + 1];
-    strcpy(st, s);
-    strcat(st, rhs.s);
+String& String::operator+=(const String &rhs)
+{
+    char *tmp = new char[strlen(s) + strlen(rhs.s) + 1];
+    strcpy(tmp, s);
+    strcat(tmp, rhs.s);
     delete[] s;
-    s = st;
+    s = tmp;
     return *this;
 }
 ```
 
-返回引用支持链式运算。
+返回引用。
 
-### 15.4 `operator[]`
+### 13.4 `operator[]`
 
 ```cpp
-char& String::operator[](int n) {
-    return s[n];
+char& String::operator[](int i)
+{
+    return s[i];
 }
 ```
 
-返回引用才能修改字符。
+返回引用，才能作为左值。
 
-### 15.5 `operator<<` 和 `operator>>`
+### 13.5 `operator<<`
 
 ```cpp
-ostream& operator<<(ostream &out, const String &t) {
-    out << t.s;
+ostream& operator<<(ostream &out, const String &str)
+{
+    out << str.s;
     return out;
 }
-
-istream& operator>>(istream &in, String &t) {
-    char buf[1000];
-    in >> buf;
-    t = buf;
-    return in;
-}
 ```
 
-### 15.6 派生类赋值运算符
+返回 `ostream&`，支持连续输出。
 
-```cpp
-Child& Child::operator=(const Child &rhs) {
-    if (this != &rhs) {
-        Parent::operator=(rhs);
-        score = rhs.score;
-        delete[] name;
-        name = new char[strlen(rhs.name) + 1];
-        strcpy(name, rhs.name);
-    }
-    return *this;
-}
-```
-
-赋值运算符不能被继承，派生类需要处理自己的新增成员。
-
-### 15.7 类模板成员函数类外定义
+### 13.6 `Array<T>` 下标
 
 ```cpp
 template <class T>
-Array<T>::Array(int sz) {
-    size = sz;
-    list = new T[size];
-}
-
-template <class T>
-Array<T>::~Array() {
-    delete[] list;
-}
-
-template <class T>
-T& Array<T>::operator[](int i) {
+T& Array<T>::operator[](int i)
+{
     assert(i >= 0 && i < size);
     return list[i];
 }
 ```
 
-## 16. 一页速记表
+`const` 版本：
 
-### 16.1 构造析构顺序
-
-普通派生类构造：
-
-```text
-基类 -> 成员对象 -> 派生类自身
+```cpp
+template <class T>
+const T& Array<T>::operator[](int i) const
+{
+    assert(i >= 0 && i < size);
+    return list[i];
+}
 ```
 
-普通派生类析构：
+## 14. 最后一页速记
 
 ```text
-派生类自身 -> 成员对象 -> 基类
-```
-
-含虚基类构造：
-
-```text
-虚基类 -> 非虚基类 -> 成员对象 -> 最远派生类自身
-```
-
-### 16.2 复制构造触发
-
-```text
-新对象用旧对象初始化
-对象值传参
-函数返回对象
-```
-
-### 16.3 赋值运算符触发
-
-```text
-两个对象都已经存在，执行 a = b
-```
-
-### 16.4 动态内存类必写
-
-```text
-析构函数
-复制构造函数
-operator=
-```
-
-### 16.5 虚函数动态绑定条件
-
-```text
-公有继承/类型兼容
-基类中有 virtual
-通过基类指针或引用调用
-```
-
-### 16.6 运算符返回值
-
-| 运算符 | 常用返回 |
-|---|---|
-| `operator=` | `A&` |
-| 前置 `++` | `A&` |
-| 后置 `++` | `A` |
-| `operator+` | `A` |
-| `operator+=` | `A&` |
-| `operator[]` | `T&` |
-| `operator<<` | `ostream&` |
-| `operator>>` | `istream&` |
-
-### 16.7 必须成员函数重载
-
-| 运算符 | 规则 |
-|---|---|
-| `= () [] ->` | 只能重载为成员函数 |
-| `<< >>` | 通常重载为非成员/友元函数 |
-| `+= -= *= /=` | 不是强制成员，但建议写成成员函数 |
-| `+ - == <` | 可成员可非成员，不修改操作数时常写友元 |
-
-记准确：真正“只能成员函数重载”的是 `= () [] ->`。`+=` 只是建议成员，不属于只能成员的列表。
-
-### 16.8 不能重载的运算符
-
-```text
-.   .*   ->*   ::   sizeof   ?:
-```
-
-### 16.9 文件流六步
-
-```text
-include <fstream>
-定义文件流对象
-open 文件
-检查是否成功
-读/写
-close
-```
-
-### 16.10 异常三段式
-
-```text
-try -> throw -> catch
-```
-
-### 16.11 第 5 章速记
-
-```text
-static 数据成员：类内声明，类外定义初始化
-static 成员函数：无 this，只能直接访问 static 成员
+inline：短小频繁函数，建议编译器展开
+默认参数：从右往左给，中间不能断
+函数重载：看参数，不看返回值
+构造函数：对象出生时自动调用
+析构函数：对象死亡时自动调用
+复制构造：新对象用旧对象初始化
+赋值运算符：两个旧对象之间赋值
+初始化列表：const、引用、无默认构造成员必须用
+static 数据成员：类内声明，类外定义
+static 成员函数：无 this，不能直接访问非 static 成员
 friend：单向、不传递、不继承
 常对象：只能调用常成员函数
-常成员函数：声明和定义都要写 const，不能改普通数据成员
-常数据成员/引用成员：必须初始化列表初始化
-头文件保护：#ifndef / #define / #endif
+new/delete 配对，new[]/delete[] 配对
+浅复制：复制指针地址
+深复制：重新分配空间复制内容
+继承权限：公保公不变，私私保保，私不访
+对象切片：派生类赋给基类对象，只保留基类部分
+虚函数：通过基类指针/引用调用，看实际对象
+虚析构：多态基类最好写 virtual 析构
+纯虚函数：=0，有纯虚函数就是抽象类
+operator[] 返回引用，才能作为左值
+operator<< 返回 ostream&
+模板：类型参数化，定义通常放头文件
+异常：try -> throw -> catch
 ```
-
-## 17. 最后复习路线
-
-第一轮，按章节扫：
-
-1. 第 4 章类和对象。
-2. 第 5 章数据共享与保护。
-3. 第 6 章动态内存和深复制。
-4. 第 7 章继承与虚基类。
-5. 第 8 章运算符重载与虚函数。
-6. 第 9 章模板和动态数组类。
-7. 第 11、12 章流和异常。
-8. 第 1、2、3 章补基础选择判断。
-
-第二轮，专项刷：
-
-1. 写出构造析构输出顺序。
-2. 判断复制构造还是赋值运算符。
-3. 判断 `static`、`friend`、`const`、作用域隐藏是否合法。
-4. 手写 `String` 类的 Big Three 和运算符。
-5. 手写 `Array<T>` 的 `operator[]`、复制构造、赋值、析构。
-6. 判断虚函数调用结果。
-7. 判断多继承成员访问是否二义。
-8. 写文件读写和异常处理框架。
-
-第三轮，临考速记：
-
-- 访问控制表。
-- 构造析构顺序。
-- 静态成员、友元、常成员函数。
-- Big Three。
-- 运算符重载返回类型。
-- 虚函数动态绑定条件。
-- `new/delete` 配对。
-- 模板类外定义格式。
