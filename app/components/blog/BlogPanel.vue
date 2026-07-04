@@ -1,38 +1,40 @@
 <script setup lang="ts">
+defineProps<{
+	hasAside?: boolean
+}>()
+
 const layoutStore = useLayoutStore()
-const { asideWidgets, isAnyOpen, translate } = storeToRefs(layoutStore)
+const { avoidTargets } = storeToRefs(layoutStore)
 
-const panelTranslateStyle = computed(() => ({
-	transform: Object.values(translate.value).map(v => v ? `translate(${v})` : '').join(' '),
-}))
-
-useEventListener('keydown', (e) => {
-	if (isAnyOpen.value && e.key === 'Escape') {
-		e.preventDefault()
-		layoutStore.closeAll()
-	}
-})
+const panelRef = useTemplateRef('blog-panel')
+const { transform } = useAvoidTransform(panelRef, avoidTargets)
 </script>
 
 <template>
-<div id="blog-panel" :class="{ 'has-active': layoutStore.isAnyOpen }" :style="panelTranslateStyle">
+<div
+	id="blog-panel"
+	ref="blog-panel"
+	:class="{ 'has-active': layoutStore.state !== 'none' }"
+	:style="{ transform }"
+>
 	<button
-		class="toggle-sidebar mobile-only"
-		:class="{ active: layoutStore.open.sidebar }"
-		aria-label="切换菜单"
-		@click="layoutStore.toggle('sidebar')"
-	>
-		<Icon class="rtl-flip" name="ph:sidebar-duotone" />
-	</button>
-
-	<button
-		v-if="asideWidgets.length"
+		v-if="hasAside"
 		class="toggle-aside widescreen-only"
-		:class="{ active: layoutStore.open.aside }"
+		:class="{ active: layoutStore.state === 'aside' }"
 		aria-label="切换侧边栏"
 		@click="layoutStore.toggle('aside')"
 	>
-		<Icon class="rtl-flip" name="ph:align-right-duotone" />
+		<Icon class="rtl-flip" name="tabler:align-right" />
+	</button>
+
+	<Icon v-show="false" name="tabler:layout-sidebar-filled" />
+	<button
+		class="toggle-sidebar mobile-only"
+		:class="{ active: layoutStore.state === 'sidebar' }"
+		aria-label="切换菜单"
+		@click="layoutStore.toggle('sidebar')"
+	>
+		<Icon class="rtl-flip" :name="layoutStore.state === 'sidebar' ? 'tabler:layout-sidebar-filled' : 'tabler:layout-sidebar'" />
 	</button>
 </div>
 </template>
@@ -41,6 +43,7 @@ useEventListener('keydown', (e) => {
 #blog-panel {
 	contain: paint;
 	position: fixed;
+	inset-inline-end: min(1rem, 5%);
 	bottom: min(2rem, 5%);
 	border-radius: 0.5rem;
 	background-color: var(--c-bg-a50);
@@ -48,14 +51,13 @@ useEventListener('keydown', (e) => {
 	font-size: 1.4rem;
 	transition: transform 0.1s;
 	z-index: var(--z-index-popover);
-	inset-inline-end: min(1rem, 5%);
 
 	@media (max-height: $breakpoint-phone) {
 		display: flex;
 	}
 
 	&.has-active {
-		box-shadow: 0 0 0.5rem var(--ld-shadow);
+		box-shadow: var(--box-shadow-1), var(--box-shadow-3);
 	}
 }
 

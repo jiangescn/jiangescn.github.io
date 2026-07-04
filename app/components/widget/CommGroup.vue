@@ -1,17 +1,21 @@
+<script setup lang="ts">
+const { author } = useAppConfig()
+</script>
+
 <template>
 <BlogWidget
 	card
 	dim
-	title="博客/技术社区"
-	bg-img="https://p.qlogo.cn/gh/169994096/169994096/100/"
+	title="联系"
+	:bg-img="author.avatar"
 	bg-right
 >
 	<div class="title text-creative">
-		纸网接入点
+		Jiangse
 	</div>
 
 	<Tip copy icon :tip-options="{ placement: 'left' }">
-		<Icon name="ri:qq-fill" />169994096
+		<Icon name="tabler:mail" />{{ author.email }}
 	</Tip>
 </BlogWidget>
 </template>
@@ -23,8 +27,6 @@
 	background-position: 100% 0;
 	background-size: 200%;
 	font-size: 1.8em;
-	font-weight: 800;
-	letter-spacing: 0.05em;
 	color: transparent;
 	transition: background-position 0.2s;
 
@@ -39,6 +41,6 @@
 }
 
 :deep(.bg-img).bg-img.bg-img {
-	opacity: 0.5;
+	opacity: 0.35;
 }
 </style>

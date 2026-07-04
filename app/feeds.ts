@@ -1,7 +1,8 @@
 // 友链检测 CLI 需要使用显式导入和相对路径
 import type { FeedGroup } from '../app/types/feed'
 import { myFeed } from '../blog.config'
-import { getFavicon, getGhAvatar, getGhIcon, getQqAvatar, QqAvatarSize } from './utils/img'
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { getFavicon, getGithubAvatar, getGithubIcon, getOicqAvatar, OicqAvatarSize } from './utils/img'
 
 export default [
 	// #region Clarity
@@ -18,7 +19,7 @@ export default [
 			// 	link: 'https://blog.xlenco.top/',
 			// 	feed: 'https://blog.xlenco.top/atom.xml',
 			// 	icon: 'https://weavatar.com/avatar/67254b346498965226e5c91ebff66a69570b97f224d2d061e504b4eade1f00fa',
-			// 	avatar: getQqAvatar('1043865083'),
+			// 	avatar: getOicqAvatar('1043865083'),
 			// 	archs: ['Nuxt', 'EdgeOne'],
 			// 	date: '2024-07-28',
 			// 	comment: '学生，经验分享。',
@@ -136,7 +137,7 @@ export default [
 			// 	link: 'https://blog.xxfer.cn/',
 			// 	feed: 'https://blog.xxfer.cn/rss.xml',
 			// 	icon: getFavicon('blog.xxfer.cn'),
-			// 	avatar: getGhAvatar('JJLibra'),
+			// 	avatar: getGithubAvatar('JJLibra'),
 			// 	archs: ['Hexo', '国内 CDN'],
 			// 	date: '2024-02-01',
 			// 	comment: '瓜大网安学长。',

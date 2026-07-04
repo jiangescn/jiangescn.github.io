@@ -1,5 +1,21 @@
+import type { ContentCollectionItem } from '@nuxt/content'
+import type { MetaSlotsTree } from '~~/remark-plugins/rehype-meta-slots'
 import type { ArticleOrderType, ArticleProps } from '~/types/article'
-import { alphabetical } from 'radash'
+import { orderBy } from 'es-toolkit/array'
+
+/** 获取已加载的文章内容/元信息 */
+export function useArticle(path?: MaybeRefOrGetter<string | undefined>) {
+	const route = useRoute()
+	const dataKey = computed(() => `content:${toValue(path) ?? route.path}`)
+	const post = computed(() => useNuxtData<ContentCollectionItem | null | undefined>(dataKey.value).data.value)
+
+	return {
+		dataKey,
+		post,
+		toc: computed(() => post.value?.body.toc),
+		metaSlots: computed(() => post.value?.meta.slots as Record<string, MetaSlotsTree>),
+	}
+}
 
 /**
  * 生成文章查询参数，完全包装 useAsyncData 会使 SSR 行为异常，缓存 key 需要暴露
@@ -7,10 +23,10 @@ import { alphabetical } from 'radash'
  * @see https://github.com/nuxt/nuxt/issues/14736
  * @todo 支持分页/分类筛选
  */
-export function useArticleIndexOptions(path = 'posts/%') {
+export function getArticleIndexOptions(path = 'posts/%') {
 	return queryCollection('content')
 		.where('stem', 'LIKE', path)
-		.select('categories', 'date', 'description', 'image', 'path', 'readingTime', 'recommend', 'title', 'type', 'updated')
+		.select('categories', 'date', 'description', 'image', 'path', 'readingTime', 'recommend', 'tags', 'title', 'type', 'updated')
 		.all()
 }
 
@@ -69,10 +85,10 @@ export function useArticleSort(list: MaybeRefOrGetter<ArticleProps[]>, options?:
 		? useRouteQuery(bindDirectionQuery, initialAscend.toString(), { transform: booleanQueryTransformer })
 		: ref<boolean>(initialAscend)
 
-	const listSorted = computed(() => alphabetical(
+	const listSorted = computed(() => orderBy(
 		toValue(list),
-		item => item[sortOrder.value] || '',
-		isAscending.value ? 'asc' : 'desc',
+		[sortOrder.value, 'date'],
+		[isAscending.value ? 'asc' : 'desc'],
 	))
 
 	return {
@@ -84,7 +100,12 @@ export function useArticleSort(list: MaybeRefOrGetter<ArticleProps[]>, options?:
 
 export function getCategoryIcon(category?: string) {
 	const appConfig = useAppConfig()
-	return appConfig.article.categories[category!]?.icon ?? 'ph:folder-bold'
+	return appConfig.article.categories[category!]?.icon ?? 'tabler:folder'
+}
+
+export function getCategoryColor(category?: string) {
+	const appConfig = useAppConfig()
+	return appConfig.article.categories[category!]?.color
 }
 
 interface GetPostTypeClassNameOptions {

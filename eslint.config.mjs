@@ -20,6 +20,11 @@ export default antfu({
 		'yaml/indent': ['error', 2],
 	},
 }, {
+	files: ['app/pages/**/*.vue'],
+	rules: {
+		'vue/valid-v-slot': 'off',
+	},
+}, {
 	files: ['**/*.json'],
 	ignores: ['content/**'],
 	rules: {
@@ -37,6 +42,7 @@ export default antfu({
 		'prefer-arrow-callback': 'off',
 		'prefer-template': 'off',
 		'style/indent': 'off',
+		'style/no-mixed-spaces-and-tabs': 'off',
 		'style/quotes': 'off',
 		'style/semi': 'off',
 		'unicorn/prefer-includes': 'off',

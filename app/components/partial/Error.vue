@@ -8,7 +8,7 @@ withDefaults(defineProps<{
 	code?: string
 	language?: BundledLanguage
 }>(), {
-	icon: 'solar:siren-rounded-bold-duotone',
+	icon: 'line-md:cloud-alt-print-twotone-loop',
 	language: 'log',
 })
 </script>
@@ -18,6 +18,10 @@ withDefaults(defineProps<{
 	<div />
 	<Icon class="error-icon" :name="icon" />
 	<div class="error-title" v-html="title" />
+
+	<div class="operation">
+		<slot name="operation" />
+	</div>
 
 	<ProsePre
 		v-if="code"

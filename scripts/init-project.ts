@@ -3,6 +3,7 @@
 import fs from 'node:fs'
 import process from 'node:process'
 import { intro, log, outro, spinner, text } from '@clack/prompts'
+import { Temporal } from 'temporal-polyfill'
 
 intro('初始化博客：删除原有文章、配置')
 
@@ -21,7 +22,7 @@ s.start('正在处理文章、配置文件...')
 // 清空 content 目录并新建示例文章
 const PATH_LINK_MD = './content/link.md'
 const PATH_EXAMPLE_MD = './content/previews/example.md'
-const PATH_NEW_MD = `./content/posts/${new Date().getFullYear()}`
+const PATH_NEW_MD = `./content/posts/${Temporal.Now.plainDateISO().year.toString()}`
 const linkMdContent = fs.readFileSync(PATH_LINK_MD, 'utf8')
 if (!fs.existsSync(PATH_EXAMPLE_MD)) {
 	s.stop('示例文章不存在')
@@ -38,21 +39,20 @@ const PATH_APP_CONFIG = './app/app.config.ts'
 const appConfigContent = fs.readFileSync(PATH_APP_CONFIG, 'utf8')
 	.replace(/'.*?avatar.com.*?'/, 'blogConfig.author.avatar')
 	.replaceAll('L33Z22L11\'', 'octocat\'')
-	.replace('\'/theme\'', `'https://github.com/L33Z22L11/blog-v3'`)
+	.replace('\'/theme\'', `'https://blog.zhilu.site/theme'`)
 	.replace(/'.?ICP备.*?'/, '\'备案\'')
 fs.writeFileSync(PATH_APP_CONFIG, appConfigContent)
 
 // 处理 blog.config.ts
 const PATH_BLOG_CONFIG = './blog.config.ts'
 const blogConfigContent = fs.readFileSync(PATH_BLOG_CONFIG, 'utf8')
-	.replace(/title: '[^']*'/, 'title: \'博客\'')
-	.replace(/name: '[^']*'/, 'name: \'博主\'')
-	.replace(/'[^']*jianges[^']*'/g, match => match.replace(/jianges/, 'example'))
+	.replace(/'[^']*纸鹿[^']*'/g, '\'博客\'')
+	.replace(/'[^']*zhilu[^']*'/g, match => match.replace('zhilu', 'example'))
 fs.writeFileSync(PATH_BLOG_CONFIG, blogConfigContent)
 
 // 处理 redirects.json
 fs.writeFileSync('./redirects.json', `{
-  "/theme": "https://github.com/L33Z22L11/blog-v3"
+  "/theme": "https://blog.zhilu.site/theme"
 }`)
 
 s.stop('初始化完成')

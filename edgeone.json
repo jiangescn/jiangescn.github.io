@@ -16,12 +16,12 @@
           "value": "application/xml"
         }
       ],
-      "source": "/jianges.opml"
+      "source": "*.opml"
     }
   ],
   "redirects": [
     {
-      "destination": "https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg",
+      "destination": "/favicon.png",
       "source": "/favicon.ico",
       "status": 308
     }

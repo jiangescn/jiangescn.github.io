@@ -1,53 +1,34 @@
-const defaultState = {
-	sidebar: false,
-	aside: false,
-	search: false,
-}
-
-type LayoutSection = keyof typeof defaultState
+export type LayoutState = 'none' | 'sidebar' | 'aside' | 'search' | 'lightbox'
 
 export const useLayoutStore = defineStore('layout', () => {
 	const router = useRouter()
 
-	const open = ref({ ...defaultState })
-	const isAnyOpen = computed(() => Object.values(open.value).some(Boolean))
-	const translate = ref<Record<string, string>>({})
+	const state = ref<LayoutState>('none')
+	const avoidTargets = ref<AvoidTarget[]>([])
 
-	const asideWidgets = ref<WidgetName[]>([])
+	const close = () => state.value = 'none'
 
-	const closeAll = () => {
-		Object.keys(open.value).forEach((key) => {
-			open.value[key as LayoutSection] = false
-		})
+	const toggle = (key: LayoutState) => {
+		if (state.value === key)
+			return close()
+		state.value = key
 	}
 
-	const toggle = (key: LayoutSection) => {
-		const isActive = open.value[key]
-		closeAll()
-		open.value[key] = !isActive
-	}
-
-	const setAside = (widgets?: WidgetName[]) => {
-		if (widgets)
-			asideWidgets.value = widgets
-	}
-
-	const setTranslate = (reason: string, value: string) => {
-		translate.value[reason] = value
-	}
+	useEventListener('keydown', (e) => {
+		if (state.value !== 'none' && e.key === 'Escape') {
+			e.preventDefault()
+			close()
+		}
+	})
 
 	router.beforeEach(() => {
-		closeAll()
+		close()
 	})
 
 	return {
-		open,
-		isAnyOpen,
-		asideWidgets,
-		translate,
-		closeAll,
+		state,
+		avoidTargets,
+		close,
 		toggle,
-		setAside,
-		setTranslate,
 	}
 })

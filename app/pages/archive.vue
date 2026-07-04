@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { group } from 'radash'
+import type { ArticleProps } from '~/types/article'
+import { groupBy } from 'es-toolkit/array'
+import { sumBy } from 'es-toolkit/math'
+import { mapValues } from 'es-toolkit/object'
 
 const appConfig = useAppConfig()
 useSeoMeta({
@@ -7,45 +10,70 @@ useSeoMeta({
 	description: `${appConfig.title}的所有文章归档。`,
 })
 const birthYear = computed(() => appConfig.component.stats.birthYear)
+const showTuning = ref(false)
+const spacing = ref(0)
+const column = ref(1)
 
-const layoutStore = useLayoutStore()
-layoutStore.setAside(['blog-stats', 'blog-log'])
+const tuningRef = useTemplateRef('tuning-panel')
+useAvoidTarget(tuningRef, showTuning)
 
-const { data: listRaw } = await useAsyncData('index_posts', () => useArticleIndexOptions(), { default: () => [] })
+const { data: listRaw } = await useAsyncData('posts:index', () => getArticleIndexOptions(), { default: () => [] })
 const { listSorted, isAscending, sortOrder } = useArticleSort(listRaw)
 const { category, categories, listCategorized } = useCategory(listSorted)
 
 const listGrouped = computed(() => {
-	const groupList = Object.entries(group(
-		listCategorized.value,
-		article => new Date(article[sortOrder.value] || 0).getFullYear(),
-	))
+	const groupList = Object.entries(groupBy(listCategorized.value, getArticleYear))
 	return isAscending.value ? groupList : groupList.reverse()
 })
 
 // 不能使用 /api/stats，因为可能切换分组方式
-const yearlyWordCount = computed(() => {
-	return listGrouped.value.reduce<Record<string, string>>((acc, [year, yearGroup]) => {
-		const totalWords = yearGroup?.reduce((sum, cur) => sum + cur.readingTime!.words, 0) || 0
-		acc[year] = formatNumber(totalWords)
-		return acc
-	}, {})
-})
+const yearlyWordCount = computed(() =>
+	mapValues(Object.fromEntries(listGrouped.value), (articles) => {
+		const total = sumBy(articles, a => a.readingTime?.words ?? 0)
+		return formatNumber(total)
+	}),
+)
+
+function getArticleYear(article: ArticleProps) {
+	try {
+		return toZonedTemporal(article[sortOrder.value] as string).year.toString()
+	}
+	catch {
+		return ''
+	}
+}
 </script>
 
 <template>
+<template #aside>
+	<WidgetBlogStats />
+	<WidgetBlogLog />
+</template>
+
 <div class="archive proper-height">
 	<PostOrderToggle
 		v-model:is-ascending="isAscending"
 		v-model:sort-order="sortOrder"
 		v-model:category="category"
 		:categories
-	/>
+	>
+		<ZSecret>
+			<ZToggle
+				v-model="showTuning"
+				label="密度调节"
+			/>
+		</ZSecret>
+	</PostOrderToggle>
 
 	<section
 		v-for="[year, yearGroup] in listGrouped"
 		:key="year"
 		class="archive-group"
+		:class="{ 'hide-info': column > 1 }"
+		:style="{
+			'--archive-item-gap': `${spacing}em`,
+			'--archive-item-column': column,
+		}"
 	>
 		<div class="archive-title">
 			<h2 class="archive-year">
@@ -69,22 +97,62 @@ const yearlyWordCount = computed(() => {
 				:key="article.path"
 				v-bind="article"
 				:to="article.path"
+				:show-category="column < 3"
 				:use-updated="sortOrder === 'updated'"
 				:style="getFixedDelay(index * 0.03)"
 			/>
 		</TransitionGroup>
 	</section>
+
+	<div v-if="showTuning" ref="tuning-panel" class="archive-tuning card">
+		<ZSlider
+			v-model="spacing"
+			label="间距"
+			:spring-min="-0.4"
+			:spring-max="0.1"
+			:list="['-0.3', '0']"
+			min="-1"
+			max=".2"
+			step=".1"
+		/>
+
+		<ZSlider
+			v-model="column"
+			label="列数"
+			min="1"
+			max="8"
+		/>
+	</div>
 </div>
 </template>
 
 <style lang="scss" scoped>
 .archive {
-	margin: 1rem;
-	mask-image: linear-gradient(#FFF 50%, #FFF5);
+	padding: 1rem; // 防止内部 outline 被 mask
+	mask-image: linear-gradient(#FFF 50%, #FFF7);
 }
 
 .archive-group {
 	margin: 1rem 0 3rem;
+
+	> .archive-list {
+		display: grid;
+		grid-template-columns: repeat(var(--archive-item-column), 1fr);
+		column-gap: calc((5 - var(--archive-item-column)) * 0.2em);
+	}
+
+	&.hide-info :deep(.dim-hover) {
+		display: none;
+	}
+}
+
+.archive-tuning {
+	position: sticky;
+	bottom: min(2em, 5%);
+
+	> .z-slider {
+		margin: 0.5em 0.8em;
+	}
 }
 
 .archive-title {

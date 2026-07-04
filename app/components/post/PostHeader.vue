@@ -7,8 +7,6 @@ const props = defineProps<ArticleProps>()
 const appConfig = useAppConfig()
 
 const coverFilter = computed(() => props.meta?.coverFilter || (props.meta?.coverDim && 'brightness(0.75)') || undefined)
-const categoryLabel = computed(() => props.categories?.[0])
-const categoryIcon = computed(() => getCategoryIcon(categoryLabel.value))
 
 const shareText = `【${appConfig.title}】${props.title}\n\n${
 	props.description ? `${props.description}\n\n` : ''}${
@@ -18,43 +16,42 @@ const { copy, copied } = useCopy(shareText)
 </script>
 
 <template>
-<!-- 💩夸克浏览器，桌面端只有IE不支持 :has() 了 -->
 <div class="post-header" :class="{ 'has-cover': image }">
 	<Pic v-if="image" class="post-cover" :src="image" :alt="title" :filter="coverFilter" />
 	<div class="post-nav">
 		<div class="operations">
+			<Icon v-show="false" name="tabler:check" />
 			<ZButton
-				:icon="copied ? 'ph:check-bold' : 'ph:share-bold' "
+				:icon="copied ? 'tabler:check' : 'tabler:share'"
+				text="文字分享"
 				@click="copy()"
-			>
-				文字分享
-			</ZButton>
+			/>
 		</div>
 
 		<div v-if="!meta?.hideInfo" class="post-info">
 			<UtilDate
 				v-if="date"
 				v-tip
-				tip-prefix="创建于"
-				:date="date"
-				icon="ph:calendar-dots-bold"
+				:tip-transform="d => `创建于${d}`"
+				:date
+				icon="tabler:pencil-minus"
 			/>
 
 			<UtilDate
-				v-if="updated && isTimeDiffSignificant(date, updated, .999)"
+				v-if="updated && isTimeDiffSignificant(date, updated, 1)"
 				v-tip
-				tip-prefix="修改于"
+				:tip-transform="d => `修改于${d}`"
 				:date="updated"
-				icon="ph:calendar-plus-bold"
+				icon="tabler:clock-edit"
 			/>
 
-			<span v-if="categoryLabel">
-				<Icon :name="categoryIcon" />
-				{{ categoryLabel }}
+			<span v-if="categories">
+				<Icon :name="getCategoryIcon(categories[0])" />
+				{{ categories[0] }}
 			</span>
 
 			<span>
-				<Icon name="ph:paragraph-bold" />
+				<Icon name="tabler:pilcrow" />
 				{{ formatNumber(readingTime?.words) }} 字
 			</span>
 		</div>
@@ -68,6 +65,7 @@ const { copy, copied } = useCopy(shareText)
 
 <style lang="scss" scoped>
 .post-header {
+	contain: paint; // overflow hidden + position relative
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -88,7 +86,6 @@ const { copy, copied } = useCopy(shareText)
 	}
 
 	&.has-cover {
-		contain: paint; // overflow hidden + position relative
 		min-height: 16rem;
 		max-height: 20rem;
 		color: white;
@@ -100,7 +97,7 @@ const { copy, copied } = useCopy(shareText)
 
 		.post-title {
 			background-image: linear-gradient(transparent, #0003, #0005);
-			text-shadow: var(--text-black-shadow);
+			text-shadow: var(--text-shadow-black);
 
 			&.text-story {
 				text-align: center;

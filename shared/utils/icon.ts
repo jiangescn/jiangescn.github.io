@@ -6,6 +6,9 @@ const archIcons = {
 	'Deno Deploy': 'simple-icons:deno',
 	'EdgeOne': 'simple-icons:cloudnativebuild', // 不准确
 	'Express': 'simple-icons:express',
+	'Fly': 'tabler:air-balloon',
+	'Framer': 'simple-icons:framer',
+	'Ghost': 'simple-icons:ghost',
 	'GitHub Pages': 'simple-icons:github',
 	'Golang': 'simple-icons:go',
 	'Gridea': 'tabler:square-rounded-letter-g-filled', // 不准确
@@ -14,8 +17,10 @@ const archIcons = {
 	'HTML': 'simple-icons:html5',
 	'Hugo': 'simple-icons:hugo',
 	'Jekyll': 'simple-icons:jekyll',
+	'Material for MkDocs': 'simple-icons:materialformkdocs',
 	'Netlify': 'simple-icons:netlify',
 	'Next.js': 'simple-icons:nextdotjs',
+	'Notion': 'simple-icons:notion',
 	'NotionNext': 'simple-icons:notion',
 	'Nuxt': 'simple-icons:nuxt',
 	'PHP': 'simple-icons:php',
@@ -29,9 +34,9 @@ const archIcons = {
 	'VuePress': 'uim:vuejs',
 	'WordPress': 'simple-icons:wordpress',
 	'Zeabur': 'tabler:square-letter-z-filled', // 不准确
-	'国内 CDN': 'ph:cloud-check-fill',
-	'服务器': 'ph:hard-drives-fill',
-	'虚拟主机': 'ph:file-cloud-bold',
+	'国内 CDN': 'tabler:cloud-data-connection',
+	'服务器': 'tabler:server',
+	'虚拟主机': 'tabler:cloud-upload',
 }
 
 export type Arch = keyof typeof archIcons
@@ -56,15 +61,20 @@ export const ciIcons: Record<string, string> = {
 const mainDomainIcons: Record<string, string> = {
 	'bilibili.com': 'ri:bilibili-fill',
 	'creativecommons.org': 'ri:creative-commons-line',
+	'feishu.cn': 'icon-park-outline:new-lark',
 	'github.com': 'ri:github-fill',
 	'github.io': 'ri:github-fill',
 	'google.cn': 'ri:google-fill',
 	'google.com': 'ri:google-fill',
+	'jd.com': 'arcticons:jd-sports',
+	'larkoffice.com': 'icon-park-outline:new-lark',
 	'microsoft.com': 'ri:microsoft-fill',
 	'netlify.app': 'simple-icons:netlify',
 	'pages.dev': 'simple-icons:cloudflare',
 	'qq.com': 'ri:qq-fill',
-	'thisis.host': 'ph:star-four-fill',
+	'taobao.com': 'ri:taobao-fill',
+	'thisis.host': 'tabler:star-filled',
+	'tmall.com': 'ri:taobao-fill',
 	'v2ex.com': 'simple-icons:v2ex',
 	'vercel.app': 'simple-icons:vercel',
 	'zabaur.app': 'tabler:square-letter-z-filled',

@@ -19,7 +19,7 @@ const basicConfig = {
 	favicon: '/favicon.png',
 	language: 'zh-CN',
 	timeEstablished: '2025-12-30',
-	timezone: 'Asia/Shanghai',
+	timeZone: 'Asia/Shanghai',
 	url: 'https://jiangescn.github.io/',
 	defaultCategory: '未分类',
 }
@@ -32,16 +32,15 @@ const blogConfig = {
 
 	article: {
 		categories: {
-			[basicConfig.defaultCategory]: { icon: 'ph:folder-dotted-bold' },
-			'WUST-OJ': { icon: 'ph:terminal-window-bold', color: '#77f' },
-			技术: { icon: 'ph:wrench-bold', color: '#3af' },
-			经验分享: { icon: 'ph:mouse-bold', color: '#3af' },
-			杂谈: { icon: 'ph:chat-bold', color: '#3ba' },
-			生活: { icon: 'ph:shooting-star-bold', color: '#f77' },
-			代码: { icon: 'ph:code-bold', color: '#77f' },
-			期末复习: { icon: 'ph:graduation-cap-bold', color: '#fa3' },
+			[basicConfig.defaultCategory]: { icon: 'tabler:circle-dashed' },
+			'WUST-OJ': { icon: 'tabler:terminal-2', color: '#77f' },
+			技术: { icon: 'tabler:tool', color: '#3af' },
+			经验分享: { icon: 'tabler:mouse', color: '#3af' },
+			杂谈: { icon: 'tabler:message', color: '#3ba' },
+			生活: { icon: 'tabler:sparkles', color: '#f77' },
+			代码: { icon: 'tabler:code', color: '#77f' },
+			期末复习: { icon: 'tabler:school', color: '#fa3' },
 		},
-		defaultCategoryIcon: 'ph:folder-bold',
 		/** 文章版式，首个为默认版式 */
 		types: {
 			tech: {},

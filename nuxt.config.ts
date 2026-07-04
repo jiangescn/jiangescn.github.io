@@ -1,10 +1,17 @@
-import type { NitroConfig } from 'nitropack'
+import { resolve } from 'node:path'
 import { arch, env, version as nodeVersion, platform } from 'node:process'
+import { pathToFileURL } from 'node:url'
 import { name as ciName, CLOUDFLARE_PAGES, GITHUB_ACTIONS, NETLIFY } from 'ci-info'
-import { pascal } from 'radash'
+import { mapValues } from 'es-toolkit/object'
+import { pascalCase } from 'es-toolkit/string'
+import { Temporal } from 'temporal-polyfill'
 import blogConfig from './blog.config'
 import packageJson from './package.json'
 import redirectList from './redirects.json'
+
+function pluginPath(path: string) {
+	return pathToFileURL(resolve(`./remark-plugins/${path}.ts`)).href
+}
 
 // 此处配置无需修改
 export default defineNuxtConfig({
@@ -14,7 +21,7 @@ export default defineNuxtConfig({
 				{ name: 'author', content: [blogConfig.author.name, blogConfig.author.email].filter(Boolean).join(', ') },
 				{ name: 'color-scheme', content: 'light dark' },
 				// 此处为元数据的生成器标识，不建议修改
-				{ 'name': 'generator', 'content': `${pascal(packageJson.name)} ${packageJson.version}`, 'data-github-repo': packageJson.homepage },
+				{ 'name': 'generator', 'content': `${pascalCase(packageJson.name)} ${packageJson.version}`, 'data-github-repo': packageJson.homepage },
 				{ name: 'mobile-web-app-capable', content: 'yes' },
 			],
 			link: [
@@ -24,11 +31,11 @@ export default defineNuxtConfig({
 				{ rel: 'stylesheet', href: 'https://lib.baomitu.com/KaTeX/0.16.9/katex.min.css', media: 'print', onload: 'this.media="all"' },
 				// "InterVariable", "Inter", "InterDisplay"
 				{ rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css', media: 'print', onload: 'this.media="all"' },
-				// "JetBrains Mono", 思源黑体 "Noto Sans SC", 思源宋体 "Noto Serif SC"
+				// "JetBrains Mono", 思源宋体 "Noto Serif SC"
 				{ rel: 'preconnect', href: 'https://fonts.gstatic.cn', crossorigin: '' },
-				{ rel: 'stylesheet', href: 'https://fonts.googleapis.cn/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Sans+SC:wght@100..900&family=Noto+Serif+SC:wght@200..900&display=swap', media: 'print', onload: 'this.media="all"' },
-				// 小米字体 "MiSans"
-				{ rel: 'stylesheet', href: 'https://cdn-font.hyperos.mi.com/font/css?family=MiSans:100,200,300,400,450,500,600,650,700,900:Chinese_Simplify,Latin&display=swap', media: 'print', onload: 'this.media="all"' },
+				{ rel: 'stylesheet', href: 'https://fonts.googleapis.cn/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Serif+SC:wght@200..900&display=swap', media: 'print', onload: 'this.media="all"' },
+				// 抖音美好体 "DOUYINSANSBOLD-GB"
+				{ rel: 'stylesheet', href: 'https://fonts.bytedance.com/dfd/api/v1/css?family=DOUYINSANSBOLD-GB&display=swap', media: 'print', onload: 'this.media="all"' },
 			],
 			templateParams: {
 				separator: '|',
@@ -77,22 +84,19 @@ export default defineNuxtConfig({
 
 	// @keep-sorted
 	routeRules: {
-		...Object.entries(redirectList)
-			.reduce<NitroConfig['routeRules']>((acc, [from, to]) => {
-				acc![from] = { redirect: { to, statusCode: 308 } }
-				return acc
-			}, {}),
+		...mapValues(redirectList, to => ({ redirect: { to, statusCode: 308 as const } })),
 		'/api/stats': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
 		'/jianges.opml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
+		'/subscriptions.opml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 	},
 
 	runtimeConfig: {
 		// @keep-sorted
 		public: {
 			arch,
-			buildTime: new Date().toISOString(),
+			buildTime: Temporal.Now.zonedDateTimeISO().toString(),
 			// EdgeOne 检测暂时不可用
 			ci: env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ciName || '',
 			nodeVersion,
@@ -102,6 +106,16 @@ export default defineNuxtConfig({
 
 	/** 在生产环境启用 sourcemap */
 	// sourcemap: true,
+
+	typescript: {
+		nodeTsConfig: {
+			// @keep-sorted
+			include: [
+				'../remark-plugins/**/*.ts',
+				'../scripts/**/*.ts',
+			],
+		},
+	},
 
 	vite: {
 		css: {
@@ -117,6 +131,10 @@ export default defineNuxtConfig({
 			/** 在生产环境启用 Vue 水合不匹配详情 */
 			// __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true',
 		},
+		optimizeDeps: {
+			// @keep-sorted
+			include: ['@shikijs/colorized-brackets', '@shikijs/transformers', '@unhead/schema-org/vue', '@vue/devtools-core', '@vue/devtools-kit', 'embla-carousel-autoplay', 'embla-carousel-vue', 'embla-carousel-wheel-gestures', 'es-toolkit/array', 'es-toolkit/math', 'es-toolkit/object', 'es-toolkit/promise', 'es-toolkit/string', 'minisearch', 'parse-domain', 'plain-shiki', 'shiki/themes/catppuccin-latte.mjs', 'shiki/themes/one-dark-pro.mjs', 'temporal-polyfill', 'vue-tippy'],
+		},
 		server: {
 			allowedHosts: true,
 		},
@@ -124,6 +142,9 @@ export default defineNuxtConfig({
 
 	// @keep-sorted
 	modules: [
+		'@bikariya/image-viewer',
+		'@bikariya/modals',
+		'@bikariya/shiki',
 		'@nuxt/a11y',
 		'@nuxt/content',
 		'@nuxt/hints',
@@ -149,14 +170,14 @@ export default defineNuxtConfig({
 				highlight: false,
 				// @keep-sorted
 				remarkPlugins: {
+					[pluginPath('remark-music')]: {},
 					'remark-math': {},
-					'remark-music': {},
 					'remark-reading-time': {},
 				},
 				// @keep-sorted
 				rehypePlugins: {
+					[pluginPath('rehype-meta-slots')]: {},
 					'rehype-katex': {},
-					'rehype-meta-slots': {},
 				},
 				toc: { depth: 4, searchDepth: 4 },
 			},
@@ -166,26 +187,28 @@ export default defineNuxtConfig({
 		},
 	},
 
+	dxup: {
+		features: {
+			namedLayoutSlots: true,
+		},
+	},
+
 	hooks: {
 		'ready': () => {
 			console.info(`
 ================================
-${pascal(packageJson.name)} ${packageJson.version}
+${pascalCase(packageJson.name)} ${packageJson.version}
 ${packageJson.homepage}
 ================================
 `)
 		},
 		'content:file:afterParse': (ctx) => {
-			const permalink = ctx.content.permalink as string
-			if (permalink) {
+			const { permalink, path } = ctx.content as Record<string, string | undefined>
+			// 优先使用自定义链接（permalink/abbrlink），其次隐藏基于文件路由的 URL 中的 /posts 前缀
+			if (permalink)
 				ctx.content.path = permalink
-				return
-			}
-			// 在 URL 中隐藏文件路由自动生成的 /posts 路径前缀
-			if (blogConfig.article.hidePostPrefix) {
-				const realPath = ctx.content.path as string | undefined
-				ctx.content.path = realPath?.replace(/^\/posts/, '')
-			}
+			else if (blogConfig.article.hidePostPrefix && path?.startsWith('/posts/'))
+				ctx.content.path = path.slice('/posts'.length)
 		},
 	},
 
@@ -201,10 +224,12 @@ ${packageJson.homepage}
 	},
 
 	image: {
+		// 尽量以这些密度点对点显示
+		densities: [1, 1.5, 2],
+		format: ['avif', 'webp'],
 		// Neylify 下 netlify 处理器无法显示站外图片，ipx 处理器无法显示站内图片，需彻底禁用
 		// https://github.com/nuxt/image/issues/1353
 		provider: NETLIFY ? 'none' : undefined,
-		format: ['avif', 'webp'],
 	},
 
 	linkChecker: {

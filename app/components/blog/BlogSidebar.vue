@@ -9,18 +9,18 @@ const debouncedSelection = refDebounced(text)
 
 <template>
 <BlogMask
-	v-model:show="layoutStore.open.sidebar"
+	:show="layoutStore.state === 'sidebar'"
 	class="mobile-only"
-	@click="layoutStore.toggle('sidebar')"
+	@click="layoutStore.close()"
 />
 
 <!-- 不能用 Transition 实现弹出收起动画，因为半宽屏状态始终显示 -->
-<aside id="blog-sidebar" :class="{ show: layoutStore.open.sidebar }">
+<aside id="blog-sidebar" :class="{ show: layoutStore.state === 'sidebar' }">
 	<BlogHeader class="sidebar-header" to="/" />
 
 	<nav class="sidebar-nav scrollcheck-y">
 		<div class="search-btn sidebar-nav-item gradient-card" @click="layoutStore.toggle('search')">
-			<Icon name="ph:magnifying-glass-bold" />
+			<Icon name="tabler:search" />
 			<span class="nav-text">{{ debouncedSelection || searchStore.word || '搜索' }}</span>
 			<Key class="keycut" code="K" cmd prevent @press="layoutStore.toggle('search')" />
 		</div>
@@ -35,7 +35,7 @@ const debouncedSelection = refDebounced(text)
 					<UtilLink :to="item.url" class="sidebar-nav-item">
 						<Icon :name="item.icon" />
 						<span class="nav-text">{{ item.text }}</span>
-						<Icon v-if="isExtLink(item.url)" class="external-tip" name="ph:arrow-up-right" />
+						<Icon v-if="isExtLink(item.url)" class="external-tip" name="tabler:arrow-up-right" />
 					</UtilLink>
 				</li>
 			</menu>
@@ -72,7 +72,7 @@ const debouncedSelection = refDebounced(text)
 		z-index: var(--z-index-popover);
 
 		&.show {
-			box-shadow: 0 0 1rem var(--ld-shadow);
+			box-shadow: var(--box-shadow-1), var(--box-shadow-3);
 			transform: none;
 		}
 	}

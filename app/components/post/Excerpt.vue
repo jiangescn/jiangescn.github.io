@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sleep } from 'radash'
+import { delay } from 'es-toolkit/promise'
 
 const props = defineProps<{
 	excerpt: string
@@ -11,14 +11,12 @@ const excerpt = ref(props.excerpt)
 const caret = ref('')
 
 if (appConfig.component.excerpt?.animation !== false) {
-	// onBeforeMount(() => {
 	excerpt.value = ''
-	// })
 	onMounted(async () => {
 		caret.value = appConfig.component.excerpt?.caret ?? '_'
 		for (const char of props.excerpt) {
 			excerpt.value += char
-			await sleep(50)
+			await delay(50)
 		}
 		caret.value = ''
 	})
@@ -33,30 +31,36 @@ if (import.meta.dev) {
 
 <template>
 <div class="md-excerpt gradient-card">
-	<Icon name="ph:highlighter-bold" />{{ excerpt }}{{ caret }}
+	<span class="dynamic"><Icon name="tabler:sparkles-2" />{{ excerpt }}{{ caret }}</span>
+	<span class="static"><Icon name="tabler:sparkles-2" />{{ props.excerpt }}</span>
 </div>
 </template>
 
 <style lang="scss" scoped>
-@keyframes fadein {
-	from { opacity: 0; }
-	to { opacity: 1; }
-}
-
 .md-excerpt {
-	margin: 1rem;
+	opacity: 0.6;
+	margin: 1rem 0.5rem;
 	padding: 0.5rem;
 	font-size: 0.9em;
-	color: var(--c-text-2);
+	transition: opacity 0.2s;
 
-	// animation: fadein 3s;
+	> .static {
+		opacity: 0;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	> .dynamic {
+		position: absolute;
+		width: calc(100% - 1rem);
+	}
 
 	.iconify {
 		margin-inline-end: 0.3em;
 	}
 
 	&:hover {
-		color: currentcolor;
+		opacity: 1;
 	}
 }
 </style>

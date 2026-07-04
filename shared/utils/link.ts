@@ -5,7 +5,7 @@ const domainTip: Record<string, string> = {
 	'github.io': 'GitHub Pages 域名',
 	'netlify.app': 'Netlify 域名',
 	'pages.dev': 'Cloudflare 域名',
-	'thisis.host': '独立博客域名',
+	'thisis.host': '纸鹿提供的域名',
 	'vercel.app': 'Vercel 域名',
 	'zeabur.app': 'Zeabur 域名',
 }
@@ -28,11 +28,12 @@ export function getDomainType(mainDomain: string) {
 	return domainTip[mainDomain]
 }
 
-export function getGhUsername(url?: string) {
+const githubUsernameRegex = /github\.com\/([a-zA-Z0-9-]+)(?:\/[^/]+)?(\/?)$/
+
+export function getGithubUsername(url?: string) {
 	if (!url)
 		return ''
-	const usernameRegex = /github\.com\/([a-zA-Z0-9-]+)(?:\/[^/]+)?(\/?)$/
-	return url.match(usernameRegex)?.[1] ?? ''
+	return url.match(githubUsernameRegex)?.[1] ?? ''
 }
 
 export function isExtLink(url?: string) {

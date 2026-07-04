@@ -11,20 +11,20 @@
 		padding-inline-start: 0;
 		list-style: none;
 
-		>li {
+		> li {
 			margin: 0;
 		}
 	}
 
-	>ol, >ul {
+	> ol, > ul {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 		gap: 0.5em;
 
-		>li {
+		> li {
 			padding: 0.5em 0.8em;
 			border-radius: 0.5em;
-			box-shadow: 0 2px 4px var(--ld-shadow);
+			box-shadow: var(--box-shadow-2);
 			background-color: var(--ld-bg-card);
 		}
 	}

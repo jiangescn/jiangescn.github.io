@@ -1,5 +1,7 @@
 ---
 title: 主题
+date: 2024-08-04 20:27:59
+updated: 2026-02-03 02:50:11
 hideInfo: true
 
 aside: [toc, meta-aside-github]
@@ -70,7 +72,7 @@ class: gradient-card active
 ---
 banner: https://7.isyangs.cn/24/66d4c3ea35003-24.jpg
 title: 博客进化：从 Hexo 到 Nuxt Content
-link: /2024/blog-using-nuxt
+link: https://github.com/L33Z22L11/blog-v3
 ---
 ::
 
@@ -78,7 +80,7 @@ link: /2024/blog-using-nuxt
 
 - 灵感源自 [xaoxuu/hexo-theme-stellar](https://github.com/xaoxuu/hexo-theme-stellar)，这是一个经过精致设计的简洁 Hexo 主题。
 - 借鉴了众多优秀设计，自己的一些设计也为 :tip[许多朋友的博客项目]{tip="真的有不少！"} 提供了灵感。
-- Clarity 项目被多人用作个人博客，详见 [`README.md`](https://github.com/L33Z22L11/blog-v3)。
+- Clarity 项目被多人用作个人博客，详见上游 [`README.md`](https://github.com/L33Z22L11/blog-v3)。
 
 ### 技术架构
 
@@ -88,17 +90,15 @@ link: /2024/blog-using-nuxt
   - **开发语言**：TypeScript + Vue 3 + Scss
 - 内容与服务
   - **内容管理**：Nuxt Content v3
-  - **部署平台**：Vercel
-  - **评论系统**：Twikoo
-  - **评论数据库**：MongoDB
+  - **部署平台**：GitHub Pages / Vercel
+  - **评论系统**：可接入 Twikoo
   - **包管理器**：pnpm
 - 工具库
-  - **日期处理**：date-fns
   - **轮播图**：Embla Carousel
   - **订阅源生成**：Fast XML Parser
   - **域名解析**：parse-domain
   - **代码高亮**：Shiki + Plain Shiki
-  - **实用算法片段库**：Radash
+  - **实用函数库**：es-toolkit
   - **悬浮组件库**：Vue Tippy
 - 依赖模块
   - **图标管理**：Nuxt Icon（Iconify）
@@ -106,8 +106,9 @@ link: /2024/blog-using-nuxt
   - **SEO优化**：Nuxt SEO
   - **状态管理**：Pinia
   - **Vue 实用功能库**：VueUse
+  - **Nuxt 实用模块**：Bikariya
   - **代码质量**：ESLint + Stylelint
-  - **代码压缩**：oxc-minify
+  - **代码压缩**：Oxc Minify
 ::
 
 - 更多技术依赖可参考 [`pnpm-workspace.yaml`](https://github.com/jiangescn/jiangescn.github.io/blob/main/pnpm-workspace.yaml)。

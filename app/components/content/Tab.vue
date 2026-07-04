@@ -6,11 +6,11 @@ const props = defineProps<{
 	active?: string | number
 }>()
 
-// 使用 v-bind:active 以传递 Number 值
 const activeTab = ref(Number(props.active) || 1)
 </script>
 
 <template>
+<!-- BUG: MDC Tab插槽块内会吞代码缩进 -->
 <div :class="{ center }">
 	<div class="tabs">
 		<button
@@ -68,8 +68,8 @@ button {
 	&::before, &::after {
 		display: block;
 		position: absolute;
-		bottom: -0.5em;
 		inset-inline: 0.8em;
+		bottom: -0.5em;
 		height: 2px;
 		border-radius: 1em;
 		pointer-events: none;
@@ -82,7 +82,7 @@ button {
 	}
 
 	&.active {
-		box-shadow: 0 1px 0.5em var(--ld-shadow);
+		box-shadow: var(--box-shadow-1), var(--box-shadow-1);
 		background-color: var(--ld-bg-card);
 		color: var(--c-text);
 
