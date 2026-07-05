@@ -233,6 +233,7 @@ ${packageJson.homepage}
 	},
 
 	linkChecker: {
+		runOnBuild: !GITHUB_ACTIONS,
 		// @keep-sorted
 		skipInspections: [
 			'no-baseless',
