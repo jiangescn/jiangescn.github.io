@@ -69,12 +69,17 @@ const blogConfig = {
 	},
 
 	/** 向 <head> 中添加脚本 */
-	scripts: [],
+	scripts: [
+		{
+			src: 'https://registry.npmmirror.com/twikoo/1.7.13/files/dist/twikoo.all.min.js',
+			defer: true,
+		},
+	],
 
 	/** 自己部署的 Twikoo 服务；留空时不显示评论区 */
 	twikoo: {
-		envId: '',
-		preload: '',
+		envId: 'https://twikoo.jianges.com',
+		preload: 'https://twikoo.jianges.com',
 	},
 }
 
