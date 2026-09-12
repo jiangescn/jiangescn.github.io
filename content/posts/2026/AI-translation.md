@@ -34,17 +34,17 @@ class: gradient-card active
 ::
 
 
-- [沉浸式翻译🔗](https://microsoftedge.microsoft.com/addons/detail/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%BF%BB%E8%AF%91-%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91%E6%8F%92%E4%BB%B6-pdf%E7%BF%BB%E8%AF%91-/amkbmndfnliijdhojkpoglbnaaahippg) 打开这个插件，并点击`获取`，获取成功后，插件会出现在浏览器的右上角[](extension://amkbmndfnliijdhojkpoglbnaaahippg/options.html#services){icon="clarity:plugin-line"}，然后右键`沉浸式翻译图标`，点击`打开设置页` （如下图所示
+- [沉浸式翻译🔗](https://microsoftedge.microsoft.com/addons/detail/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%BF%BB%E8%AF%91-%E7%BD%91%E9%A1%B5%E7%BF%BB%E8%AF%91%E6%8F%92%E4%BB%B6-pdf%E7%BF%BB%E8%AF%91-/amkbmndfnliijdhojkpoglbnaaahippg) 打开这个插件，并点击`获取`，获取成功后，插件会出现在浏览器的右上角，然后右键`沉浸式翻译图标`，点击`打开设置页` （如下图所示
 
-![](/images/immersive-ai-translation-setup/18.png)
+![沉浸式翻译插件设置入口](/public/images/immersive-ai-translation-setup/18.png)
 
 - 点击左侧栏第二项`翻译服务` 
 
-![1](/images/immersive-ai-translation-setup/19.png)
+![翻译服务设置](/public/images/immersive-ai-translation-setup/19.png)
 
 - 点击右上角`添加自定义翻译服务`
 
-![1](/images/immersive-ai-translation-setup/21.png)
+![添加自定义翻译服务](/public/images/immersive-ai-translation-setup/21.png)
 
 - 选择`DeepSeek`，暂且搁置此页面。现在我们需要先去获取DeepSeek的API。
 
@@ -54,11 +54,11 @@ class: gradient-card active
 - 登录后，点在左侧栏的 `充值`（充值一个小数额即可，翻译对token的消耗量较小，够用很久了）
 - 然后我们按照如下步骤，创建API key。
 
-![1](/images/immersive-ai-translation-setup/23.png)
+![创建 DeepSeek API Key](/public/images/immersive-ai-translation-setup/23.png)
 
 ### 2.3配置插件
 
-- 现在，我们回到刚刚搁置的插件配置页面，在此处粘贴刚刚复制的API Key。 ![1](/images/immersive-ai-translation-setup/24.png)
+- 现在，我们回到刚刚搁置的插件配置页面，在此处粘贴刚刚复制的API Key。 ![粘贴 DeepSeek API Key](/public/images/immersive-ai-translation-setup/24.png)
 
 - 点击右上角 `点此测试服务`，如果出现`✅` 就说明API Key配置成功。
 
@@ -78,11 +78,11 @@ class: gradient-card active
     ---
     ::
 
-- 可以观察到网页右侧有个粉色小按钮 :badge[]{link="https://immersivetranslate.com/zh-Hans/"} ，鼠标移动至按钮上方（不点击）后，正下方会展开有 `控制面板` [](){icon="lineicons:sliders-horizontal-square-2"}，点击打开
+- 可以观察到网页右侧有个粉色小按钮 :badge[]{link="https://immersivetranslate.com/zh-Hans/"} ，鼠标移动至按钮上方（不点击）后，正下方会展开有 `控制面板` ，点击打开
 
 - 然后我们点击 `翻译服务：`，会出现许多模型，我们要下滑到最后，选择 `其他/自定义`中的刚刚创建的 `DeepSeek 1` 模型。 
 
-![1](/images/immersive-ai-translation-setup/25.png)
+![选择自定义翻译模型](/public/images/immersive-ai-translation-setup/25.png)
 
 - 如果你看到相应的中文提示说明插件现在已经正式生效，之后再使用翻译只需点击这个粉色小按钮稍待即可翻译成功！
 

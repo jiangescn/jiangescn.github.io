@@ -22,12 +22,12 @@ tags: [VSCode, C++, MinGW, CPH, 环境配置, WUSTACM]
 
 从 [蓝奏云](https://wwavk.lanzoub.com/ijOZo3wl71uf) `密码fd9o` / [Github](https://github.com/niXman/mingw-builds-binaries/releases/download/15.2.0-rt_v13-rev1/x86_64-15.2.0-release-posix-seh-ucrt-rt_v13-rev1.7z) /  [OneDrive](https://dlink.host/sharepoint/aHR0cHM6Ly9kbGluay5ob3N0L3NoYXJlcG9pbnQvYUhSMGNITTZMeTh5TmpZd09UazRPRE15Y1hFdGJYa3VjMmhoY21Wd2IybHVkQzVqYjIwdk9uVTZMMmN2Y0dWeWMyOXVZV3d2WVdSdGFXNXBjM1J5WVhSdmNsOXFhV0Z1WjJWelgyTnZiUzlKVVVOWlYwMUdTVXc0VlZWVVRHOVVWekZ6VWtzNVFrTkJaV1pxTjBWdVJFdGhkRTB4TTFKaWJrNURSRlZJTUQ5bFBWbDVTM1k0UWcuanBn.7z) 下载Mingw64，解压放在C盘根目录（如下图所示 ~~解压和复制巨量文件可能使你的风扇旋转~~）
 
-![1784118439705](/images/vscode-acm-config/1784118439705.png)
+![1784118439705](/public/images/vscode-acm-config/1784118439705.png)
 点击`开始/搜索` -  键入 `编辑系统环境变量` -  点击右下角的`环境变量` -  双击下方`系统变量(S)`栏目的 `path` -  点击右方的`新建(N)` - 输入
 
 `C:\mingw64\bin`{copy}（可以进入该路径复制，效果如下）- 然后一路点击确定关闭页面
 
-![1784120077114](/images/vscode-acm-config/1784120077114.png)
+![1784120077114](/public/images/vscode-acm-config/1784120077114.png)
 
 ## 3.配置vscode
 
@@ -35,7 +35,7 @@ tags: [VSCode, C++, MinGW, CPH, 环境配置, WUSTACM]
 
 打开vscode后我们先进行第一步~~伟大~~的操作，切换语言到中文
 
-![1784120961385](/images/vscode-acm-config/1784120961385.png)
+![1784120961385](/public/images/vscode-acm-config/1784120961385.png)
 
 搜索`Chinese`{copy}，点击`Chinese (Simplified) (简体中文) Language Pack for Visual Studio Code`的`Install`按钮，然后点击右下角的 `Change Language and Restart` 重启VSCode
 
@@ -49,7 +49,7 @@ tags: [VSCode, C++, MinGW, CPH, 环境配置, WUSTACM]
 安装完后重启VSCode
 
 
-![1784120973084](/images/vscode-acm-config/1784120973084.png)
+![1784120973084](/public/images/vscode-acm-config/1784120973084.png)
 
 ### 3.3 配置VSCode编译选项
 
@@ -57,7 +57,7 @@ tags: [VSCode, C++, MinGW, CPH, 环境配置, WUSTACM]
 
 在VSCode页面同时按下 :key{ctrl shift code="P"}，然后键入 `C/C++`选择 `C/C++:Edit Configurations (UI) 或 C/C++:编辑配置(UI)` 更改以下配置
 
-![1784121662598](/images/vscode-acm-config/1784121662598.png)
+![1784121662598](/public/images/vscode-acm-config/1784121662598.png)
 
 如果一致则无须任何改动
 
@@ -67,7 +67,7 @@ tags: [VSCode, C++, MinGW, CPH, 环境配置, WUSTACM]
 
 现在我们将要创建第一个`.cpp`文件开始书写代码了！一定要写文件后缀`.cpp`
 
-![1784122283582](/images/vscode-acm-config/1784122283582.png)
+![1784122283582](/public/images/vscode-acm-config/1784122283582.png)
 
 ### 3.5 编译运行
 
@@ -89,11 +89,11 @@ int main()
 
 
 
-现在我们尝试调试出CPH窗口并把它放在合适的位置，点击 `创建题目 / 新建测试用例`![1784122691546](/images/vscode-acm-config/1784122691546.png)
+现在我们尝试调试出CPH窗口并把它放在合适的位置，点击 `创建题目 / 新建测试用例`![1784122691546](/public/images/vscode-acm-config/1784122691546.png)
 
 如果不出意外，现在就会输出正确的结果
 
-![1784122778830](/images/vscode-acm-config/1784122778830.png)
+![1784122778830](/public/images/vscode-acm-config/1784122778830.png)
 
 恭喜你完成了vscode的CPH版本配置！
 
@@ -104,10 +104,11 @@ int main()
 
 在VSCode页面按下 :key{ctrl code=","}（对的你没看错就是逗号`，`）
 
-![1784124966947](/images/vscode-acm-config/1784124966947.png)
+![1784124966947](/public/images/vscode-acm-config/1784124966947.png)
 
 把下面的文字全部粘贴到 `{}`内部
 
+<!-- eslint-skip -->
 ```json [setting.json]
 
     /*editor*/
@@ -181,6 +182,7 @@ int main()
 
 ```
 
+<!-- eslint-skip -->
 ```json
     "code-runner.runInTerminal": true, //如果希望使用Code Runner请复制此行
 ```

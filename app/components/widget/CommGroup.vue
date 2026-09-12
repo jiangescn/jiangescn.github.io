@@ -8,14 +8,15 @@ const { author } = useAppConfig()
 	dim
 	title="联系"
 	:bg-img="author.avatar"
-	bg-right
+	bg-aside
 >
 	<div class="title text-creative">
 		Jiangse
 	</div>
 
 	<Tip copy icon :tip-options="{ placement: 'left' }">
-		<Icon name="tabler:mail" />{{ author.email }}
+		<Icon name="tabler:mail" />
+		<span>{{ author.email }}</span>
 	</Tip>
 </BlogWidget>
 </template>

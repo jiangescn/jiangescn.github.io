@@ -2,3 +2,6 @@
 *.md            linguist-detectable
 pnpm-lock.yaml  -linguist-detectable
 app/feeds.ts    -linguist-detectable
+*.patch         text eol=lf
+*.scss          text eol=lf
+*.vue           text eol=lf

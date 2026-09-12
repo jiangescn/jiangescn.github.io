@@ -34,12 +34,13 @@ const blogConfig = {
 		categories: {
 			[basicConfig.defaultCategory]: { icon: 'tabler:circle-dashed' },
 			'WUST-OJ': { icon: 'tabler:terminal-2', color: '#77f' },
-			技术: { icon: 'tabler:tool', color: '#3af' },
-			经验分享: { icon: 'tabler:mouse', color: '#3af' },
-			杂谈: { icon: 'tabler:message', color: '#3ba' },
-			生活: { icon: 'tabler:sparkles', color: '#f77' },
-			代码: { icon: 'tabler:code', color: '#77f' },
-			期末复习: { icon: 'tabler:school', color: '#fa3' },
+			'技术': { icon: 'tabler:tool', color: '#3af' },
+			'技术分享': { icon: 'tabler:tool', color: '#3af' },
+			'经验分享': { icon: 'tabler:mouse', color: '#3af' },
+			'杂谈': { icon: 'tabler:message', color: '#3ba' },
+			'生活': { icon: 'tabler:sparkles', color: '#f77' },
+			'代码': { icon: 'tabler:code', color: '#77f' },
+			'期末复习': { icon: 'tabler:school', color: '#fa3' },
 		},
 		/** 文章版式，首个为默认版式 */
 		types: {
@@ -75,6 +76,16 @@ const blogConfig = {
 			defer: true,
 		},
 	],
+
+	/** 文章统计配置 */
+	stats: {
+		/**
+		 * 统计范围，匹配 content 下不含扩展名的路径（stem）；空数组统计全部内容
+		 * 使用 SQL LIKE 语法：% 匹配任意长度字符，_ 匹配单个字符
+		 * 多个范围取并集，如 ['posts/%', 'book/%']
+		 */
+		includePaths: ['posts/%'] as string[],
+	},
 
 	/** 自己部署的 Twikoo 服务；留空时不显示评论区 */
 	twikoo: {

@@ -17,6 +17,7 @@ logs
 .DS_Store
 .fleet
 .idea
+.obsidian
 
 # Local env files
 .env
@@ -26,3 +27,6 @@ logs
 # Custom
 .vercel
 content/posts/test.md
+
+# link
+/images/
