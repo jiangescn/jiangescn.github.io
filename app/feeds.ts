@@ -1,32 +1,9 @@
 // 友链检测 CLI 需要使用显式导入和相对路径
 import type { FeedGroup } from '../app/types/feed'
-import { myFeed } from '../blog.config'
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { getFavicon, getGithubAvatar, getGithubIcon, getOicqAvatar, OicqAvatarSize } from './utils/img'
 
 export default [
-	// #region Clarity
-	{
-		name: '清晰体验',
-		desc: '使用 Clarity 博客主题构建的网站。',
-		// @keep-sorted { "keys": ["date"] }
-		entries: [
-			myFeed,
-			// {
-			// 	author: 'Xlenco',
-			// 	sitenick: '希乐博客',
-			// 	desc: '互联网中的静谧之地',
-			// 	link: 'https://blog.xlenco.top/',
-			// 	feed: 'https://blog.xlenco.top/atom.xml',
-			// 	icon: 'https://weavatar.com/avatar/67254b346498965226e5c91ebff66a69570b97f224d2d061e504b4eade1f00fa',
-			// 	avatar: getOicqAvatar('1043865083'),
-			// 	archs: ['Nuxt', 'EdgeOne'],
-			// 	date: '2024-07-28',
-			// 	comment: '学生，经验分享。',
-			// }
-		],
-	},
-	// #endregion
 	// #region 网上邻居
 	{
 		name: '网上邻居',
@@ -48,13 +25,25 @@ export default [
 			// }
 		],
 	},
-	/* ========从此处新增友链======== */
-	// #region 云驿
+	// #region WUSTers
 	{
-		name: '云驿',
-		desc: '从 jianges.com 主站同步的友链。',
+		name: 'WUSTers',
+		desc: '武汉科技大学的校友们。',
 		// @keep-sorted { "keys": ["date"] }
 		entries: [
+			{
+				author: 'scandi',
+				sitenick: 'scandi',
+				title: 'scandi的小屋',
+				desc: '心怀暖阳，步履生风',
+				link: 'http://blog.scandidreams.top/',
+				feed: 'https://www.bandao.ltd/atom.xml',
+				icon: 'https://jianges.com/wp-content/uploads/2026/01/1767865673-头像.png',
+				avatar: 'https://jianges.com/wp-content/uploads/2026/01/1767865673-头像.png',
+				archs: ['Hexo', '服务器'],
+				date: '2024-02-02',
+				comment: '矮个子篮球爱好者,瘦小足球爱好者,羸弱羽毛球爱好者,短腿跑步爱好者,不会<成都>的吉他爱好者',
+			},
 			{
 				author: 'WUST-ACM',
 				sitenick: 'WUST-ACM',
@@ -97,28 +86,14 @@ export default [
 				avatar: 'https://image.wustacm.org/i/2026/02/17/si2wc7.png',
 				date: '2026-06-18',
 			},
-		],
-	},
-	// #endregion
-	// #endregion
-	// #region XUPTers
-	{
-		name: 'WUSTers',
-		desc: '武汉科技大学的校友们。',
-		// @keep-sorted { "keys": ["date"] }
-		entries: [
 			{
-				author: 'scandi',
-				sitenick: 'scandi',
-				title: 'scandi的小屋',
-				desc: '心怀暖阳，步履生风',
-				link: 'http://blog.scandidreams.top/',
-				feed: 'https://www.bandao.ltd/atom.xml',
-				icon: 'https://jianges.com/wp-content/uploads/2026/01/1767865673-头像.png',
-				avatar: 'https://jianges.com/wp-content/uploads/2026/01/1767865673-头像.png',
-				archs: ['Hexo', '服务器'],
-				date: '2024-02-02',
-				comment: '矮个子篮球爱好者,瘦小足球爱好者,羸弱羽毛球爱好者,短腿跑步爱好者,不会<成都>的吉他爱好者',
+				author: 'FengXi',
+				title: 'ListFX的Blog',
+				desc: '这里是FengXi的博客鸭～',
+				link: 'https://listfx.top/',
+				icon: 'https://www.listfx.top/img/avatar.jpg',
+				avatar: 'https://www.listfx.top/img/avatar.jpg',
+				date: '2026-09-26',
 			},
 		],
 	},
@@ -152,18 +127,44 @@ export default [
 		desc: '网上冲浪时发现的精彩内容与常读订阅，与君共享。',
 		// @keep-sorted { "keys": ["date"] }
 		entries: [
-			// {
-			// 	author: 'PlatyHsu',
-			// 	sitenick: 'neverland',
-			// 	desc: 'Editor. Currently at SSPAI.',
-			// 	link: 'https://hsu.cy/',
-			// 	feed: 'https://hsu.cy/feed.xml',
-			// 	icon: getFavicon('hsu.cy'),
-			// 	avatar: 'https://cdnfile.sspai.com/2024/01/19/2e1141e8de2022c94ea9dd8b805f877c.png?imageMogr2/auto-orient/thumbnail/!200x200r/gravity/center/crop/200x200/format/webp/ignore-error/1',
-			// 	archs: ['Hugo', 'Cloudflare'],
-			// 	date: '2025-09-03',
-			// 	comment: '长期记录多领域内容，涵盖数码产品软件配置、文艺作品品论等，兼具技术实践与观点分享。',
-			// },
+			{
+				author: '記緒漂流',
+				title: '記緒漂流',
+				desc: '于记忆之川，泛思绪之舟。',
+				link: 'https://ttio.cc/',
+				feed: 'https://ttio.cc/feed.xml',
+				icon: 'https://ttio.cc/favicon.svg',
+				avatar: 'https://ttio.cc/favicon.svg',
+				date: '2026-09-26',
+			},
+			{
+				author: 'Eltrac',
+				sitenick: '極客死亡計劃',
+				title: '極客死亡計劃',
+				desc: '这里只有真情流露和赤裸的思考。',
+				link: 'https://www.geedea.pro/',
+				icon: getFavicon('www.geedea.pro'),
+				avatar: getFavicon('www.geedea.pro', { size: 128 }),
+				date: '2026-09-26',
+			},
+			{
+				author: '纸鹿本鹿',
+				title: '纸鹿摸鱼处',
+				desc: '纸鹿至麓不知路，支炉制露不止漉',
+				link: 'https://blog.zhilu.site/',
+				icon: 'https://www.zhilu.site/api/avatar.png',
+				avatar: 'https://www.zhilu.site/api/avatar.png',
+				date: '2026-09-26',
+			},
+			{
+				author: '伏枥之间',
+				title: '伏枥之间',
+				desc: '何妨吟啸且徐行',
+				link: 'https://www.leehenry.top/',
+				icon: 'https://leehenry.top/friends/my-avatar-portrait.jpg',
+				avatar: 'https://leehenry.top/friends/my-avatar-portrait.jpg',
+				date: '2026-09-26',
+			},
 		],
 	},
 	// #endregion

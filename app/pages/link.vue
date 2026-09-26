@@ -16,7 +16,6 @@ useSeoMeta({
 })
 
 const copyFields = {
-	博主: myFeed.author,
 	标题: myFeed.title,
 	介绍: myFeed.desc,
 	网址: myFeed.link,
