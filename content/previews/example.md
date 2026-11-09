@@ -1096,7 +1096,7 @@ active: 2 # 默认显示第二个选项卡，可选
 ---
 type: raw
 id: https://sf-atsx-tob.larksuite.com/obj/static-atsx-online-sg-ee-tob-mycis/02c7da694d343896877c09de9db4fc42/8ede49e0a92f53cdafbbf49339194986d9d900fb2abe242b9a8b4e338bf18b05.mp4
-poster: https://sf-atsx-tob.larksuite.com/obj/static-atsx-online-sg-ee-tob-mycis/02c7da694d343896877c09de9db4fc42/e23074879c61a4d61e905ccef5771a36a2d19689c1204c2b32caa53711ac83ad.png
+poster: /images/localized/1463f4c9a9282bab3143.png
 ---
 ::
 
@@ -1127,7 +1127,7 @@ id: '7222222794333998392'
 ---
 type: raw
 id: https://sf-atsx-tob.larksuite.com/obj/static-atsx-online-sg-ee-tob-mycis/02c7da694d343896877c09de9db4fc42/8ede49e0a92f53cdafbbf49339194986d9d900fb2abe242b9a8b4e338bf18b05.mp4
-poster: https://sf-atsx-tob.larksuite.com/obj/static-atsx-online-sg-ee-tob-mycis/02c7da694d343896877c09de9db4fc42/e23074879c61a4d61e905ccef5771a36a2d19689c1204c2b32caa53711ac83ad.png
+poster: /images/localized/1463f4c9a9282bab3143.png
 ---
 ::
 

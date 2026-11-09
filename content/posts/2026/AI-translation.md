@@ -4,7 +4,7 @@ description: 沉浸式 AI 翻译插件配置教程，介绍沉浸式翻译插件
 date: 2026-08-09 12:01:06
 updated: 2026-08-09 12:01:06
 permalink: /2026/immersive-ai-translation-setup
-image: https://s.immersivetranslate.com/assets/r2-uploads/learn-0618/edge-install-poster1.png
+image: /images/localized/0bf3c64c816c134bd3ce.png
 categories: [技术分享]
 tags: [沉浸式翻译, AI翻译, DeepSeek, API, 浏览器插件]
 ---
@@ -26,7 +26,7 @@ tags: [沉浸式翻译, AI翻译, DeepSeek, API, 浏览器插件]
 ::link-card
 ---
 title: 沉浸式翻译 - AI 双语网页翻译
-icon: https://immersivetranslate.com/_next/static/media/logo.e15ccf02.png 
+icon: /images/localized/8087e9d743d9e59a8ef0.png 
 link: https://microsoftedge.microsoft.com/addons/detail/amkbmndfnliijdhojkpoglbnaaahippg
 
 class: gradient-card active
@@ -70,7 +70,7 @@ class: gradient-card active
 
     ::link-card
     ---
-    icon: https://immersivetranslate.com/_next/static/media/logo.e15ccf02.png 
+    icon: /images/localized/8087e9d743d9e59a8ef0.png 
     title: 翻译测试页面
     description: 点击测试翻译是否生效
     link: https://en.test.jianges.com/
@@ -94,6 +94,6 @@ class: gradient-card active
 ---
 type: raw
 id: https://s.immersivetranslate.com/assets/r2-uploads/edge-install-1.16.5.mp4 
-poster: https://s.immersivetranslate.com/assets/r2-uploads/learn-0618/edge-install-poster1.png 
+poster: /images/localized/0bf3c64c816c134bd3ce.png 
 ---
 ::

@@ -62,7 +62,7 @@ Deepseek爆火时，大家都夸赞它的文笔，但多数人用AI生成的，�
 
 ::pic
 ---
-src: https://pic1.zhimg.com/80/v2-cd5aaf77b1e4ab670dd45f2f15055ca8_qhd.jpg
+src: /images/localized/040b6441292a89b42ed4.jpg
 caption: 2025年5月，农夫山泉投放的地铁广告
 ---
 ::

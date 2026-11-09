@@ -4,7 +4,7 @@ description: WUST-OJ的C1-C5题集答案的分享
 date: 2026-01-08 23:04:49
 updated: 2026-01-12 20:51:50
 permalink: /2026/wust-oj-c1-5
-image: https://jianges.com/wp-content/uploads/2026/01/1767861378-wust-oj-lower.png
+image: /images/localized/a0c27dc231de2b69ba86.png
 categories: [WUST-OJ]
 tags: [代码, 前端, 问题]
 ---

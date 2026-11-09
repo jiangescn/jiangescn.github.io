@@ -4,7 +4,7 @@ description: WUST OJ C++ 面向对象题集参考代码整理，代码块中的 
 date: 2025-06-15 00:00:00
 updated: 2026-07-01 16:04:58
 permalink: /2025/wust-oj-cpp-reference-code
-image: https://i.postimg.cc/ZnCzZKvr/2cb79efe667b08d4b12e3b103d67653.jpg
+image: /images/localized/b2bf807af540cc61568f.jpg
 categories: [WUST-OJ]
 tags: [学习, "C++", WUST-OJ, 参考代码]
 ---

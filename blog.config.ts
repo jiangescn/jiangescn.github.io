@@ -7,7 +7,7 @@ const basicConfig = {
 	description: '兹将心事，化入岁暮之砚。不求标榜于竹帛，惟愿苔痕过雪，鸿影印沙，为逝川留一二实证。倘他年风翻此页，便算在人间，多活了一遭。',
 	author: {
 		name: 'Jiangse',
-		avatar: 'https://jianges.com/wp-content/uploads/2025/12/1765434218-jianges.jpg',
+		avatar: '/images/localized/68e3504db3d455644076.jpg',
 		email: '2660998832@qq.com',
 		homepage: 'https://jianges.com/',
 	},
@@ -103,7 +103,7 @@ export const myFeed: FeedEntry = {
 	link: 'https://blog.jianges.com/',
 	feed: new URL('/atom.xml', blogConfig.url).toString(),
 	icon: new URL(blogConfig.favicon, blogConfig.url).toString(),
-	avatar: 'https://github.com/jiangescn.png',
+	avatar: '/images/localized/2894917c1ebc50db13f8.png',
 	archs: ['Nuxt', 'GitHub Pages'],
 	date: blogConfig.timeEstablished,
 	comment: '这是我自己',

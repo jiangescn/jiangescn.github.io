@@ -4,7 +4,7 @@ description: 本文系统性地介绍了在 UEFI 环境下使用 BTRFS 文件系
 date: 2026-01-16 14:13:44
 updated: 2026-02-02 15:27:23
 permalink: /2026/archlinux
-image: https://jianges.com/wp-content/uploads/2026/01/1768551164-20260116161217_381_30-scaled.png
+image: /images/localized/5c71700de6e3a0a5d7c9.png
 categories: [技术]
 tags: [系统, 教程, Archlinux]
 ---
@@ -93,7 +93,7 @@ Windows 下推荐使用 [Ventoy](https://www.ventoy.net/cn/doc_start.html)、[Ru
 
 ::pic
 ---
-src: https://jianges.com/wp-content/uploads/2026/01/1768396992-image-1024x633.png
+src: /images/localized/57fa54776d165d7c9d04.png
 caption: 主板 BIOS 固件界面
 ---
 ::
@@ -102,7 +102,7 @@ caption: 主板 BIOS 固件界面
 
 ::pic
 ---
-src: https://jianges.com/wp-content/uploads/2026/01/1768397155-image.png
+src: /images/localized/6dc0c39af9bc7c97998e.png
 caption: Arch Linux UEFI 启动界面
 ---
 ::
@@ -217,7 +217,7 @@ cfdisk /dev/nvme0n1
 
 ::pic
 ---
-src: https://jianges.com/wp-content/uploads/2026/01/1768400160-image-1024x182.png
+src: /images/localized/b3115d93b9ef23929ce4.png
 caption: cfdisk 分区模式选择，本文选择 GPT
 ---
 ::
